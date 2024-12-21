@@ -63,14 +63,11 @@ export const ProductGallery = () => {
     setFilteredProducts(
       PRODUCTS.filter((product) => {
         switch (filter) {
-          case "name":
+          case "recent":
+            // For demo purposes, we'll search in title
             return product.title.toLowerCase().includes(searchLower);
-          case "tag":
-            return product.points.some(point => 
-              point.title.toLowerCase().includes(searchLower)
-            );
-          case "popularity":
-            // For demo purposes, we'll just search in description
+          case "popular":
+            // For demo purposes, we'll search in description
             return product.description.toLowerCase().includes(searchLower);
           default:
             return true;
@@ -86,7 +83,7 @@ export const ProductGallery = () => {
         {filteredProducts.map((product) => (
           <div
             key={product.id}
-            className="relative aspect-square cursor-pointer overflow-hidden rounded-lg"
+            className="relative aspect-square cursor-pointer overflow-hidden rounded-lg group"
             onClick={() => setSelectedProduct(product)}
           >
             <img
@@ -94,6 +91,9 @@ export const ProductGallery = () => {
               alt={product.title}
               className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
             />
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <p className="absolute bottom-2 left-2 text-white font-medium text-sm">{product.title}</p>
+            </div>
             {product.points.map((point, index) => (
               <div
                 key={index}

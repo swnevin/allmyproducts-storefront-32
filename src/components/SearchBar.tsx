@@ -5,7 +5,7 @@ interface SearchBarProps {
 }
 
 export const SearchBar = ({ onSearch }: SearchBarProps) => {
-  const [filter, setFilter] = useState("name");
+  const [filter, setFilter] = useState("recent");
 
   return (
     <div className="flex items-center gap-2 mb-6">
@@ -22,9 +22,8 @@ export const SearchBar = ({ onSearch }: SearchBarProps) => {
         onChange={(e) => setFilter(e.target.value)}
         className="text-sm px-2 py-1.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#ea384c]/30 focus:ring-1 focus:ring-[#ea384c]/30"
       >
-        <option value="name">Name</option>
-        <option value="tag">Tag</option>
-        <option value="popularity">Popularity</option>
+        <option value="recent">Recent</option>
+        <option value="popular">Most Popular</option>
       </select>
     </div>
   );

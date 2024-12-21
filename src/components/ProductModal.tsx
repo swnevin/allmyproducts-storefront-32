@@ -65,8 +65,8 @@ export const ProductModal = ({ product, onClose }: ProductModalProps) => {
               </div>
             ))}
           </div>
-          <div className="mt-4 animate-scale-in">
-            <h2 className="text-xl font-bold">{product.title}</h2>
+          <div className="mt-4 animate-fade-in">
+            <h2 className="text-xl font-bold animate-fade-in">{product.title}</h2>
             <div className="mt-1 space-y-1">
               {product.points.map((point, index) => (
                 <div key={index} className="flex items-center space-x-2 animate-fade-in">
