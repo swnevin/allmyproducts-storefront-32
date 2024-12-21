@@ -68,13 +68,13 @@ export const ProductGallery = () => {
             {product.points.map((point, index) => (
               <div
                 key={index}
-                className="absolute w-6 h-6 -mt-3 -ml-3 cursor-pointer"
+                className="absolute w-5 h-5 -mt-2.5 -ml-2.5 cursor-pointer"
                 style={{ left: `${point.x}%`, top: `${point.y}%` }}
                 title={point.title}
               >
                 <div className="absolute inset-0 bg-white rounded-full" />
-                <div className="absolute inset-[2px] bg-[#ea384c] rounded-full" />
-                <div className="absolute inset-[4px] bg-white rounded-full" />
+                <div className="absolute inset-[3px] bg-[#ea384c] rounded-full" />
+                <div className="absolute inset-[6px] bg-white rounded-full" />
               </div>
             ))}
           </div>
