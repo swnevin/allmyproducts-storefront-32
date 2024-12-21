@@ -36,14 +36,23 @@ export const ProductModal = ({ product, onClose }: ProductModalProps) => {
               className="w-full rounded-lg"
             />
             {product.points.map((point, index) => (
-              <div
+              <a
                 key={index}
-                className="absolute w-6 h-6 -mt-3 -ml-3 bg-primary rounded-full cursor-pointer animate-pulse"
+                href={point.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="absolute group"
                 style={{ left: `${point.x}%`, top: `${point.y}%` }}
-                title={point.title}
               >
-                <div className="absolute inset-0 bg-primary/50 rounded-full animate-ping" />
-              </div>
+                <div className="relative w-6 h-6 -mt-3 -ml-3">
+                  <div className="absolute inset-0 bg-white rounded-full" />
+                  <div className="absolute inset-[2px] bg-[#ea384c] rounded-full" />
+                  <div className="absolute inset-[4px] bg-white rounded-full" />
+                </div>
+                <div className="absolute left-8 top-1/2 -translate-y-1/2 bg-white px-3 py-1.5 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                  {point.title}
+                </div>
+              </a>
             ))}
           </div>
           <div className="mt-4">

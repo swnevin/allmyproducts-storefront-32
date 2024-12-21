@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ProductModal } from "./ProductModal";
+import { JoinCreator } from "./JoinCreator";
 
 interface Product {
   id: number;
@@ -64,6 +65,18 @@ export const ProductGallery = () => {
               alt={product.title}
               className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
             />
+            {product.points.map((point, index) => (
+              <div
+                key={index}
+                className="absolute w-6 h-6 -mt-3 -ml-3 cursor-pointer"
+                style={{ left: `${point.x}%`, top: `${point.y}%` }}
+                title={point.title}
+              >
+                <div className="absolute inset-0 bg-white rounded-full" />
+                <div className="absolute inset-[2px] bg-[#ea384c] rounded-full" />
+                <div className="absolute inset-[4px] bg-white rounded-full" />
+              </div>
+            ))}
           </div>
         ))}
       </div>
@@ -71,6 +84,7 @@ export const ProductGallery = () => {
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
       />
+      <JoinCreator />
     </div>
   );
 };
