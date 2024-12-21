@@ -71,6 +71,7 @@ const Onboarding = () => {
           <UsernameInput 
             value={username}
             onChange={setUsername}
+            onContinue={() => setStep(OnboardingSteps.THEME)}
           />
         );
 
