@@ -3,7 +3,7 @@ import { ProductGallery } from "@/components/ProductGallery";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 to-pink-100">
       <ProfileHeader />
       <ProductGallery />
     </div>

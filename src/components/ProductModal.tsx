@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { X, Facebook, Instagram, Twitter, Share2 } from "lucide-react";
+import { X } from "lucide-react";
 
 interface Point {
   x: number;
@@ -38,7 +38,7 @@ export const ProductModal = ({ product, onClose }: ProductModalProps) => {
             {product.points.map((point, index) => (
               <div
                 key={index}
-                className="absolute animate-fade-in"
+                className="absolute"
                 style={{ left: `${point.x}%`, top: `${point.y}%` }}
               >
                 <a
@@ -51,7 +51,7 @@ export const ProductModal = ({ product, onClose }: ProductModalProps) => {
                   <div className="absolute inset-[3px] bg-[#ea384c] rounded-full" />
                   <div className="absolute inset-[6px] bg-white rounded-full" />
                 </a>
-                <div className="absolute left-6 top-1/2 -translate-y-1/2 bg-white px-3 py-2 rounded-lg shadow-lg whitespace-nowrap z-10 opacity-0 animate-scale-in">
+                <div className="absolute left-6 top-1/2 -translate-y-1/2 bg-white px-3 py-2 rounded-lg shadow-lg whitespace-nowrap z-10 animate-[popup_0.3s_ease-out_forwards]">
                   <p className="text-sm font-medium">{point.title}</p>
                   <a 
                     href={point.link}
@@ -65,19 +65,11 @@ export const ProductModal = ({ product, onClose }: ProductModalProps) => {
               </div>
             ))}
           </div>
-          <div className="mt-4 animate-fade-in">
-            <div className="flex justify-between items-center">
-              <h2 className="text-xl font-bold">{product.title}</h2>
-              <div className="flex gap-2">
-                <Facebook className="w-5 h-5 text-gray-600 cursor-pointer hover:text-blue-600" />
-                <Instagram className="w-5 h-5 text-gray-600 cursor-pointer hover:text-pink-600" />
-                <Twitter className="w-5 h-5 text-gray-600 cursor-pointer hover:text-blue-400" />
-                <Share2 className="w-5 h-5 text-gray-600 cursor-pointer hover:text-gray-800" />
-              </div>
-            </div>
+          <div className="mt-4">
+            <h2 className="text-xl font-bold">{product.title}</h2>
             <div className="mt-1 space-y-1">
               {product.points.map((point, index) => (
-                <div key={index} className="flex items-center space-x-2 animate-fade-in">
+                <div key={index} className="flex items-center space-x-2">
                   <span className="w-2 h-2 bg-[#ea384c] rounded-full"></span>
                   <span className="text-sm font-medium">{point.title}</span>
                   <a 
