@@ -38,7 +38,7 @@ export const ProductModal = ({ product, onClose }: ProductModalProps) => {
             {product.points.map((point, index) => (
               <div
                 key={index}
-                className="absolute group"
+                className="absolute"
                 style={{ left: `${point.x}%`, top: `${point.y}%` }}
               >
                 <a
@@ -51,15 +51,39 @@ export const ProductModal = ({ product, onClose }: ProductModalProps) => {
                   <div className="absolute inset-[3px] bg-[#ea384c] rounded-full" />
                   <div className="absolute inset-[6px] bg-white rounded-full" />
                 </a>
-                <div className="absolute left-6 top-1/2 -translate-y-1/2 bg-white px-3 py-2 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
+                <div className="absolute left-6 top-1/2 -translate-y-1/2 bg-white px-3 py-2 rounded-lg shadow-lg whitespace-nowrap z-10">
                   <p className="text-sm font-medium">{point.title}</p>
+                  <a 
+                    href={point.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-gray-500 hover:text-gray-700"
+                  >
+                    {point.link.replace(/^https?:\/\//, '')}
+                  </a>
                 </div>
               </div>
             ))}
           </div>
           <div className="mt-4">
             <h2 className="text-xl font-bold">{product.title}</h2>
-            <p className="mt-2 text-gray-600">{product.description}</p>
+            <div className="mt-1 space-y-1">
+              {product.points.map((point, index) => (
+                <div key={index} className="flex items-center space-x-2">
+                  <span className="w-2 h-2 bg-[#ea384c] rounded-full"></span>
+                  <span className="text-sm font-medium">{point.title}</span>
+                  <a 
+                    href={point.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-gray-500 hover:text-gray-700"
+                  >
+                    {point.link.replace(/^https?:\/\//, '')}
+                  </a>
+                </div>
+              ))}
+            </div>
+            <p className="mt-4 text-gray-600">{product.description}</p>
           </div>
           <Dialog.Close asChild>
             <button
