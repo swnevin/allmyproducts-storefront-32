@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
+import { X, Facebook, Instagram, Twitter, Share2 } from "lucide-react";
 
 interface Point {
   x: number;
@@ -38,7 +38,7 @@ export const ProductModal = ({ product, onClose }: ProductModalProps) => {
             {product.points.map((point, index) => (
               <div
                 key={index}
-                className="absolute group/point"
+                className="absolute animate-fade-in"
                 style={{ left: `${point.x}%`, top: `${point.y}%` }}
               >
                 <a
@@ -51,7 +51,7 @@ export const ProductModal = ({ product, onClose }: ProductModalProps) => {
                   <div className="absolute inset-[3px] bg-[#ea384c] rounded-full" />
                   <div className="absolute inset-[6px] bg-white rounded-full" />
                 </a>
-                <div className="absolute left-6 top-1/2 -translate-y-1/2 bg-white px-3 py-2 rounded-lg shadow-lg whitespace-nowrap z-10 opacity-0 scale-95 group-hover/point:opacity-100 group-hover/point:scale-100 transition-all duration-200 origin-left">
+                <div className="absolute left-6 top-1/2 -translate-y-1/2 bg-white px-3 py-2 rounded-lg shadow-lg whitespace-nowrap z-10 opacity-0 animate-scale-in">
                   <p className="text-sm font-medium">{point.title}</p>
                   <a 
                     href={point.link}
@@ -66,7 +66,15 @@ export const ProductModal = ({ product, onClose }: ProductModalProps) => {
             ))}
           </div>
           <div className="mt-4 animate-fade-in">
-            <h2 className="text-xl font-bold animate-fade-in">{product.title}</h2>
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-bold">{product.title}</h2>
+              <div className="flex gap-2">
+                <Facebook className="w-5 h-5 text-gray-600 cursor-pointer hover:text-blue-600" />
+                <Instagram className="w-5 h-5 text-gray-600 cursor-pointer hover:text-pink-600" />
+                <Twitter className="w-5 h-5 text-gray-600 cursor-pointer hover:text-blue-400" />
+                <Share2 className="w-5 h-5 text-gray-600 cursor-pointer hover:text-gray-800" />
+              </div>
+            </div>
             <div className="mt-1 space-y-1">
               {product.points.map((point, index) => (
                 <div key={index} className="flex items-center space-x-2 animate-fade-in">

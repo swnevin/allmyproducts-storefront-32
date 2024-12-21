@@ -75,7 +75,7 @@ export const ProductGallery = () => {
   };
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto px-4 min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
       <SearchBar onSearch={handleSearch} />
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {filteredProducts.map((product) => (
@@ -95,25 +95,13 @@ export const ProductGallery = () => {
             {product.points.map((point, index) => (
               <div
                 key={index}
-                className="absolute w-5 h-5 -mt-2.5 -ml-2.5 cursor-pointer group/point"
+                className="absolute w-5 h-5 -mt-2.5 -ml-2.5 cursor-pointer"
                 style={{ left: `${point.x}%`, top: `${point.y}%` }}
                 title={point.title}
               >
                 <div className="absolute inset-0 bg-white rounded-full" />
                 <div className="absolute inset-[3px] bg-[#ea384c] rounded-full" />
                 <div className="absolute inset-[6px] bg-white rounded-full" />
-                <div className="absolute left-6 top-1/2 -translate-y-1/2 bg-white px-3 py-2 rounded-lg shadow-lg whitespace-nowrap z-10 opacity-0 scale-95 group-hover/point:opacity-100 group-hover/point:scale-100 transition-all duration-200 origin-left">
-                  <p className="text-sm font-medium">{point.title}</p>
-                  <a 
-                    href={point.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-gray-500 hover:text-gray-700"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {point.link.replace(/^https?:\/\//, '')}
-                  </a>
-                </div>
               </div>
             ))}
           </div>
