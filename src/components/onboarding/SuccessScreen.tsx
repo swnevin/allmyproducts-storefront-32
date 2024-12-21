@@ -20,12 +20,21 @@ export const SuccessScreen = () => {
       <p className="text-xl text-gray-600">
         Time to share your amazing products with the world
       </p>
-      <Button 
-        onClick={() => navigate("/dashboard")}
-        className="w-full bg-red-600 hover:bg-red-700"
-      >
-        Go to Dashboard
-      </Button>
+      <div className="flex gap-4">
+        <Button 
+          variant="outline"
+          onClick={() => navigate("/edit")}
+          className="flex-1"
+        >
+          Continue Editing
+        </Button>
+        <Button 
+          onClick={() => navigate("/share")}
+          className="flex-1 bg-red-600 hover:bg-red-700"
+        >
+          Share Page
+        </Button>
+      </div>
     </div>
   );
 };

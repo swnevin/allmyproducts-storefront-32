@@ -5,7 +5,7 @@ const Landing = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 to-pink-100 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-50 flex flex-col items-center justify-center p-4">
       <div className="max-w-3xl w-full text-center space-y-8">
         <h1 className="text-5xl font-bold tracking-tight">
           allmyproducts
@@ -23,7 +23,7 @@ const Landing = () => {
           </Button>
           <Button
             onClick={() => navigate("/onboarding")}
-            className="text-lg px-8 py-6 bg-purple-600 hover:bg-purple-700"
+            className="text-lg px-8 py-6 bg-red-600 hover:bg-red-700"
           >
             Sign up for free
           </Button>

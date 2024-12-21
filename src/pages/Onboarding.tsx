@@ -9,11 +9,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
 import { TemplateSelection } from "@/components/onboarding/TemplateSelection";
 import { SuccessScreen } from "@/components/onboarding/SuccessScreen";
+import { UsernameInput } from "@/components/onboarding/UsernameInput";
 
 const OnboardingSteps = {
   JOIN: 0,
   USERNAME: 1,
-  TEMPLATE: 2,
+  THEME: 2,
   GOAL: 3,
   GOAL_CONFIRMATION: 4,
   PLATFORMS: 5,
@@ -25,9 +26,10 @@ const OnboardingSteps = {
 const Onboarding = () => {
   const [step, setStep] = useState(OnboardingSteps.JOIN);
   const [selectedGoal, setSelectedGoal] = useState("");
-  const [selectedTemplate, setSelectedTemplate] = useState("");
+  const [selectedTheme, setSelectedTheme] = useState("");
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [avatarUrl, setAvatarUrl] = useState("");
+  const [username, setUsername] = useState("");
   const navigate = useNavigate();
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,32 +68,17 @@ const Onboarding = () => {
 
       case OnboardingSteps.USERNAME:
         return (
-          <div className="space-y-6 max-w-md w-full">
-            <h1 className="text-4xl font-bold">Choose your username</h1>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
-                allmyproducts.com/
-              </div>
-              <Input 
-                type="text" 
-                placeholder="username" 
-                className="w-full pl-[140px]"
-              />
-            </div>
-            <Button 
-              onClick={() => setStep(OnboardingSteps.TEMPLATE)}
-              className="w-full bg-red-600 hover:bg-red-700"
-            >
-              Continue
-            </Button>
-          </div>
+          <UsernameInput 
+            value={username}
+            onChange={setUsername}
+          />
         );
 
-      case OnboardingSteps.TEMPLATE:
+      case OnboardingSteps.THEME:
         return (
           <TemplateSelection 
-            onSelect={(template) => {
-              setSelectedTemplate(template);
+            onSelect={(theme) => {
+              setSelectedTheme(theme);
               setStep(OnboardingSteps.GOAL);
             }}
           />
@@ -265,9 +252,6 @@ const Onboarding = () => {
                 placeholder="Tell the world about yourself" 
                 className="h-24" 
               />
-              <div className="flex justify-end">
-                <span className="text-sm text-gray-500">0/80</span>
-              </div>
             </div>
             <Button 
               onClick={() => setStep(OnboardingSteps.SUCCESS)}
