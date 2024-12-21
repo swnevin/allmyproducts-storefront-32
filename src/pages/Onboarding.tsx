@@ -4,19 +4,37 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router-dom";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Label } from "@/components/ui/label";
 
 const OnboardingSteps = {
   JOIN: 0,
   USERNAME: 1,
   GOAL: 2,
-  PLATFORMS: 3,
-  LINKS: 4,
-  PROFILE: 5,
+  GOAL_CONFIRMATION: 3,
+  PLATFORMS: 4,
+  LINKS: 5,
+  PROFILE: 6,
 };
 
 const Onboarding = () => {
   const [step, setStep] = useState(OnboardingSteps.JOIN);
+  const [selectedGoal, setSelectedGoal] = useState("");
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+  const [avatarUrl, setAvatarUrl] = useState("");
   const navigate = useNavigate();
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const renderStep = () => {
     switch (step) {
@@ -34,7 +52,7 @@ const Onboarding = () => {
             </div>
             <Button 
               onClick={() => setStep(OnboardingSteps.USERNAME)}
-              className="w-full bg-purple-600 hover:bg-purple-700"
+              className="w-full bg-red-600 hover:bg-red-700"
             >
               Continue
             </Button>
@@ -44,12 +62,20 @@ const Onboarding = () => {
       case OnboardingSteps.USERNAME:
         return (
           <div className="space-y-6 max-w-md w-full">
-            <h1 className="text-4xl font-bold">Welcome to allmyproducts!</h1>
-            <p className="text-gray-600">Choose your allmyproducts username. You can always change it later.</p>
-            <Input type="text" placeholder="Username" className="w-full" />
+            <h1 className="text-4xl font-bold">Choose your username</h1>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                allmyproducts.com/
+              </div>
+              <Input 
+                type="text" 
+                placeholder="username" 
+                className="w-full pl-[140px]"
+              />
+            </div>
             <Button 
               onClick={() => setStep(OnboardingSteps.GOAL)}
-              className="w-full bg-purple-600 hover:bg-purple-700"
+              className="w-full bg-red-600 hover:bg-red-700"
             >
               Continue
             </Button>
@@ -78,7 +104,10 @@ const Onboarding = () => {
               ].map((option) => (
                 <button
                   key={option.title}
-                  onClick={() => setStep(OnboardingSteps.PLATFORMS)}
+                  onClick={() => {
+                    setSelectedGoal(option.title);
+                    setStep(OnboardingSteps.GOAL_CONFIRMATION);
+                  }}
                   className="w-full p-4 border rounded-lg text-left hover:bg-gray-50 transition-colors"
                 >
                   <h3 className="font-semibold">{option.title}</h3>
@@ -89,12 +118,33 @@ const Onboarding = () => {
           </div>
         );
 
+      case OnboardingSteps.GOAL_CONFIRMATION:
+        return (
+          <div className="space-y-6 max-w-md w-full text-center">
+            <h1 className="text-4xl font-bold">Awesome!</h1>
+            <p className="text-xl text-gray-600">
+              {selectedGoal} is a great use case for allmyproducts
+            </p>
+            <Button 
+              onClick={() => setStep(OnboardingSteps.PLATFORMS)}
+              className="w-full bg-red-600 hover:bg-red-700"
+            >
+              Continue
+            </Button>
+          </div>
+        );
+
       case OnboardingSteps.PLATFORMS:
         return (
           <div className="space-y-6 max-w-md w-full">
             <h1 className="text-4xl font-bold">Which platforms are you on?</h1>
-            <p className="text-gray-600">Pick up to five to get started. You can update at any time.</p>
-            <div className="grid grid-cols-3 gap-4">
+            <p className="text-gray-600">Pick your platforms - you can update these later</p>
+            <ToggleGroup 
+              type="multiple"
+              className="grid grid-cols-3 gap-4"
+              value={selectedPlatforms}
+              onValueChange={setSelectedPlatforms}
+            >
               {[
                 "Instagram",
                 "YouTube",
@@ -109,20 +159,30 @@ const Onboarding = () => {
                 "Snapchat",
                 "Pinterest"
               ].map((platform) => (
-                <button
+                <ToggleGroupItem
                   key={platform}
-                  className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                  value={platform}
+                  className="p-4 border rounded-lg data-[state=on]:bg-red-100 data-[state=on]:border-red-600"
                 >
                   {platform}
-                </button>
+                </ToggleGroupItem>
               ))}
+            </ToggleGroup>
+            <div className="flex gap-4">
+              <Button 
+                variant="outline"
+                onClick={() => setStep(OnboardingSteps.PROFILE)}
+                className="w-full"
+              >
+                Skip
+              </Button>
+              <Button 
+                onClick={() => setStep(OnboardingSteps.LINKS)}
+                className="w-full bg-red-600 hover:bg-red-700"
+              >
+                Continue
+              </Button>
             </div>
-            <Button 
-              onClick={() => setStep(OnboardingSteps.LINKS)}
-              className="w-full bg-purple-600 hover:bg-purple-700"
-            >
-              Continue
-            </Button>
           </div>
         );
 
@@ -130,21 +190,30 @@ const Onboarding = () => {
         return (
           <div className="space-y-6 max-w-md w-full">
             <h1 className="text-4xl font-bold">Add your links</h1>
-            <p className="text-gray-600">Complete the fields below to add your content.</p>
+            <p className="text-gray-600">Add your social media profiles</p>
             <div className="space-y-4">
-              <Input placeholder="TikTok username" />
-              <Input placeholder="YouTube username" />
-              <h3 className="font-semibold mt-6">Add your own links</h3>
-              <Input placeholder="Website URL" />
-              <Input placeholder="Website URL" />
-              <Input placeholder="Website URL" />
+              {selectedPlatforms.map((platform) => (
+                <Input 
+                  key={platform}
+                  placeholder={`Your ${platform} username or URL`}
+                />
+              ))}
             </div>
-            <Button 
-              onClick={() => setStep(OnboardingSteps.PROFILE)}
-              className="w-full bg-purple-600 hover:bg-purple-700"
-            >
-              Continue
-            </Button>
+            <div className="flex gap-4">
+              <Button 
+                variant="outline"
+                onClick={() => setStep(OnboardingSteps.PROFILE)}
+                className="w-full"
+              >
+                Skip
+              </Button>
+              <Button 
+                onClick={() => setStep(OnboardingSteps.PROFILE)}
+                className="w-full bg-red-600 hover:bg-red-700"
+              >
+                Continue
+              </Button>
+            </div>
           </div>
         );
 
@@ -153,27 +222,41 @@ const Onboarding = () => {
           <div className="space-y-6 max-w-md w-full">
             <h1 className="text-4xl font-bold">Add profile details</h1>
             <div className="space-y-4">
-              <div className="flex justify-center gap-4">
-                {[1, 2, 3].map((n) => (
-                  <button
-                    key={n}
-                    className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-purple-400"
+              <div className="flex flex-col items-center gap-4">
+                <Avatar className="w-24 h-24">
+                  <AvatarImage src={avatarUrl} />
+                  <AvatarFallback>
+                    {avatarUrl ? "..." : "+"}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col items-center">
+                  <Label 
+                    htmlFor="picture" 
+                    className="cursor-pointer text-red-600 hover:text-red-700"
+                  >
+                    Upload picture
+                  </Label>
+                  <Input
+                    id="picture"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleFileUpload}
                   />
-                ))}
-                <button className="w-16 h-16 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center">
-                  +
-                </button>
+                </div>
               </div>
               <Input placeholder="Profile title" />
-              <Textarea placeholder="Bio" className="h-24" />
-              <div className="flex justify-between items-center">
-                <button className="text-sm text-purple-600">✨ Write my bio</button>
+              <Textarea 
+                placeholder="Tell the world about yourself" 
+                className="h-24" 
+              />
+              <div className="flex justify-end">
                 <span className="text-sm text-gray-500">0/80</span>
               </div>
             </div>
             <Button 
               onClick={() => navigate("/dashboard")}
-              className="w-full bg-purple-600 hover:bg-purple-700"
+              className="w-full bg-red-600 hover:bg-red-700"
             >
               Continue
             </Button>
@@ -183,11 +266,11 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-50 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-4xl flex flex-col items-center">
         <div className="w-full max-w-xs mb-8 bg-gray-200 h-2 rounded-full">
           <div 
-            className="h-full bg-purple-600 rounded-full transition-all duration-300"
+            className="h-full bg-red-600 rounded-full transition-all duration-300"
             style={{ width: `${(step + 1) * (100 / Object.keys(OnboardingSteps).length)}%` }}
           />
         </div>
