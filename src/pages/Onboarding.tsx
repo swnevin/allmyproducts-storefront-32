@@ -7,20 +7,25 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
+import { TemplateSelection } from "@/components/onboarding/TemplateSelection";
+import { SuccessScreen } from "@/components/onboarding/SuccessScreen";
 
 const OnboardingSteps = {
   JOIN: 0,
   USERNAME: 1,
-  GOAL: 2,
-  GOAL_CONFIRMATION: 3,
-  PLATFORMS: 4,
-  LINKS: 5,
-  PROFILE: 6,
+  TEMPLATE: 2,
+  GOAL: 3,
+  GOAL_CONFIRMATION: 4,
+  PLATFORMS: 5,
+  LINKS: 6,
+  PROFILE: 7,
+  SUCCESS: 8,
 };
 
 const Onboarding = () => {
   const [step, setStep] = useState(OnboardingSteps.JOIN);
   const [selectedGoal, setSelectedGoal] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState("");
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [avatarUrl, setAvatarUrl] = useState("");
   const navigate = useNavigate();
@@ -74,12 +79,22 @@ const Onboarding = () => {
               />
             </div>
             <Button 
-              onClick={() => setStep(OnboardingSteps.GOAL)}
+              onClick={() => setStep(OnboardingSteps.TEMPLATE)}
               className="w-full bg-red-600 hover:bg-red-700"
             >
               Continue
             </Button>
           </div>
+        );
+
+      case OnboardingSteps.TEMPLATE:
+        return (
+          <TemplateSelection 
+            onSelect={(template) => {
+              setSelectedTemplate(template);
+              setStep(OnboardingSteps.GOAL);
+            }}
+          />
         );
 
       case OnboardingSteps.GOAL:
@@ -255,13 +270,16 @@ const Onboarding = () => {
               </div>
             </div>
             <Button 
-              onClick={() => navigate("/dashboard")}
+              onClick={() => setStep(OnboardingSteps.SUCCESS)}
               className="w-full bg-red-600 hover:bg-red-700"
             >
               Continue
             </Button>
           </div>
         );
+
+      case OnboardingSteps.SUCCESS:
+        return <SuccessScreen />;
     }
   };
 
