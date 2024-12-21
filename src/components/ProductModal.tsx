@@ -65,7 +65,7 @@ export const ProductModal = ({ product, onClose }: ProductModalProps) => {
               </div>
             ))}
           </div>
-          <div className="mt-4">
+          <div className="mt-4 animate-scale-in">
             <h2 className="text-xl font-bold">{product.title}</h2>
             <div className="mt-1 space-y-1">
               {product.points.map((point, index) => (

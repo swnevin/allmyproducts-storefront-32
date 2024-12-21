@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ProductModal } from "./ProductModal";
 import { JoinCreator } from "./JoinCreator";
+import { SearchBar } from "./SearchBar";
 
 interface Product {
   id: number;
@@ -50,11 +51,39 @@ const PRODUCTS: Product[] = [
 
 export const ProductGallery = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [filteredProducts, setFilteredProducts] = useState(PRODUCTS);
+
+  const handleSearch = (query: string, filter: string) => {
+    if (!query) {
+      setFilteredProducts(PRODUCTS);
+      return;
+    }
+
+    const searchLower = query.toLowerCase();
+    setFilteredProducts(
+      PRODUCTS.filter((product) => {
+        switch (filter) {
+          case "name":
+            return product.title.toLowerCase().includes(searchLower);
+          case "tag":
+            return product.points.some(point => 
+              point.title.toLowerCase().includes(searchLower)
+            );
+          case "popularity":
+            // For demo purposes, we'll just search in description
+            return product.description.toLowerCase().includes(searchLower);
+          default:
+            return true;
+        }
+      })
+    );
+  };
 
   return (
     <div className="container mx-auto px-4">
+      <SearchBar onSearch={handleSearch} />
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {PRODUCTS.map((product) => (
+        {filteredProducts.map((product) => (
           <div
             key={product.id}
             className="relative aspect-square cursor-pointer overflow-hidden rounded-lg"

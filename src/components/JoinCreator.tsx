@@ -1,6 +1,6 @@
 export const JoinCreator = () => {
   return (
-    <div className="mt-8 mb-4">
+    <div className="mt-8 mb-4 text-center">
       <a
         href="https://allmyproducts.com"
         target="_blank"
