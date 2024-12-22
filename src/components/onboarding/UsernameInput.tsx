@@ -27,15 +27,15 @@ export const UsernameInput = ({
       </div>
       <div className="space-y-6">
         <div className="relative mx-4">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <span className="text-gray-500">allmyproducts.com/</span>
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+            allmyproducts.com/
           </div>
           <Input 
             type="text" 
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder="username" 
-            className="pl-[155px] ml-0"
+            className="pl-[155px]"
           />
         </div>
         <div className="px-4">

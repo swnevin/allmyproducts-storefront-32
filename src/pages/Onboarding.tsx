@@ -2,6 +2,8 @@ import { useState } from "react";
 import { JoinStep } from "@/components/onboarding/JoinStep";
 import { UsernameInput } from "@/components/onboarding/UsernameInput";
 import { TemplateSelection } from "@/components/onboarding/TemplateSelection";
+import { ProfileStep } from "@/components/onboarding/ProfileStep";
+import { LinksStep } from "@/components/onboarding/LinksStep";
 import { SuccessScreen } from "@/components/onboarding/SuccessScreen";
 
 const OnboardingSteps = {
@@ -29,7 +31,6 @@ const Onboarding = () => {
             email={email}
             setEmail={setEmail}
             onContinue={() => setStep(OnboardingSteps.USERNAME)}
-            skipText="I will do this later"
           />
         );
 
@@ -48,7 +49,6 @@ const Onboarding = () => {
             selectedTheme={selectedTheme}
             onSelect={setSelectedTheme}
             onContinue={() => setStep(OnboardingSteps.PROFILE)}
-            skipText="I will do this later"
           />
         );
 
