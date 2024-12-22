@@ -62,20 +62,20 @@ export const TemplateSelection = ({
   onContinue: () => void;
 }) => {
   return (
-    <div className="space-y-6 max-w-md w-full">
+    <div className="space-y-4 max-w-md w-full">
       <h1 className="text-4xl font-bold">Choose your theme</h1>
       <p className="text-gray-600">Select a background theme for your page - you can change it later</p>
-      <div className="grid gap-4">
+      <div className="grid gap-3">
         {themes.map((theme) => (
           <Card 
             key={theme.id}
             className={`cursor-pointer transition-colors ${
-              selectedTheme === theme.id ? 'border-red-600' : 'hover:border-red-300'
+              selectedTheme === theme.id ? 'border-primary' : 'hover:border-primary/30'
             }`}
             onClick={() => onSelect(theme.id)}
           >
-            <CardContent className="p-4 flex gap-4 items-center">
-              <div className={`w-24 h-24 rounded ${theme.gradient}`} />
+            <CardContent className="p-3 flex gap-4 items-center">
+              <div className={`w-20 h-20 rounded ${theme.gradient}`} />
               <div>
                 <h3 className="font-semibold">{theme.name}</h3>
                 <p className="text-sm text-gray-600">{theme.description}</p>
@@ -86,7 +86,7 @@ export const TemplateSelection = ({
       </div>
       <Button 
         onClick={onContinue}
-        className="w-full bg-red-600 hover:bg-red-700"
+        className="w-full bg-primary hover:bg-primary/90"
         disabled={!selectedTheme}
       >
         Continue
