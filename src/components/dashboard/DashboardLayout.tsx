@@ -37,7 +37,7 @@ const menuItems = [
   { title: "Settings", icon: Settings, url: "/dashboard/settings" },
 ];
 
-const SidebarContent = () => {
+const DashboardSidebarContent = () => {
   const navigate = useNavigate();
   
   return (
@@ -117,12 +117,12 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="p-0">
-            <SidebarContent />
+            <DashboardSidebarContent />
           </SheetContent>
         </Sheet>
       ) : (
         <Sidebar>
-          <SidebarContent />
+          <DashboardSidebarContent />
         </Sidebar>
       )}
 

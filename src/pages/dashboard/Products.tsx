@@ -2,19 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { ProductModal } from "@/components/dashboard/ProductModal";
-
-interface Product {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  points: Array<{
-    x: number;
-    y: number;
-    title: string;
-    link: string;
-  }>;
-}
+import { Product } from "@/types/product";
 
 export const Products = () => {
   const [products, setProducts] = useState<Product[]>([]);
