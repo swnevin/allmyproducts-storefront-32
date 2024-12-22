@@ -30,12 +30,13 @@ import { Menu, Share2, Settings, BarChart3, Package2, Paintbrush, UserCircle } f
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const menuItems = [
-  { title: "Products", icon: Package2, url: "/dashboard/products" },
-  { title: "Analytics", icon: BarChart3, url: "/dashboard/analytics" },
-  { title: "Appearance", icon: Paintbrush, url: "/dashboard/appearance" },
-  { title: "Settings", icon: Settings, url: "/dashboard/settings" },
+  { title: "Products", icon: Package2, value: "products" },
+  { title: "Analytics", icon: BarChart3, value: "analytics" },
+  { title: "Appearance", icon: Paintbrush, value: "appearance" },
+  { title: "Settings", icon: Settings, value: "settings" },
 ];
 
 const DashboardSidebarContent = () => {
@@ -54,10 +55,10 @@ const DashboardSidebarContent = () => {
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <button onClick={() => navigate(`/dashboard/${item.value}`)}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </button>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -104,7 +105,7 @@ const DashboardSidebarContent = () => {
   );
 };
 
-export const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+export const DashboardLayout = ({ children, defaultTab = "products" }: { children: React.ReactNode, defaultTab?: string }) => {
   const [isShareOpen, setIsShareOpen] = useState(false);
   const isMobile = useIsMobile();
 
@@ -139,7 +140,18 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
               Share
             </Button>
           </div>
-          <main className="p-6">{children}</main>
+          <main className="p-6">
+            <Tabs defaultValue={defaultTab} className="space-y-4">
+              <TabsList>
+                {menuItems.map((item) => (
+                  <TabsTrigger key={item.value} value={item.value}>
+                    {item.title}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              {children}
+            </Tabs>
+          </main>
         </div>
         <SharePage open={isShareOpen} onOpenChange={setIsShareOpen} />
       </div>

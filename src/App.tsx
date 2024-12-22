@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import Landing from "./pages/Landing";
 import Onboarding from "./pages/Onboarding";
-import { Products } from "./pages/dashboard/Products";
+import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -20,7 +20,7 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/storefront" element={<Index />} />
-          <Route path="/dashboard/products" element={<Products />} />
+          <Route path="/dashboard/*" element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
