@@ -12,8 +12,10 @@ const OnboardingSteps = {
   SUCCESS: 3,
 } as const;
 
+type OnboardingStep = typeof OnboardingSteps[keyof typeof OnboardingSteps];
+
 const Onboarding = () => {
-  const [step, setStep] = useState(OnboardingSteps.JOIN);
+  const [step, setStep] = useState<OnboardingStep>(OnboardingSteps.JOIN);
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [selectedTheme, setSelectedTheme] = useState("");
