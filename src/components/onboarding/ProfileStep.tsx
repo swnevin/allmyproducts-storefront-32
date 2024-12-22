@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
-import { Sparkles } from "lucide-react";
+import { useState, useRef } from "react";
 
 export const ProfileStep = ({ 
   onContinue,
@@ -14,12 +13,30 @@ export const ProfileStep = ({
   const [title, setTitle] = useState("");
   const [bio, setBio] = useState("");
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const dummyAvatars = [
     { id: 1, color: "bg-gradient-to-br from-blue-400 to-blue-600" },
     { id: 2, color: "bg-gradient-to-br from-red-400 to-purple-600" },
     { id: 3, color: "bg-gradient-to-br from-green-400 to-yellow-400" },
   ];
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setUploadedImage(reader.result as string);
+        setSelectedImage(null);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
 
   return (
     <div className="space-y-8 max-w-md w-full">
@@ -35,17 +52,37 @@ export const ProfileStep = ({
             {dummyAvatars.map((avatar) => (
               <button
                 key={avatar.id}
-                onClick={() => setSelectedImage(avatar.id)}
+                onClick={() => {
+                  setSelectedImage(avatar.id);
+                  setUploadedImage(null);
+                }}
                 className={`w-16 h-16 rounded-full ${avatar.color} ${
                   selectedImage === avatar.id ? "ring-4 ring-primary ring-offset-2" : ""
                 }`}
               />
             ))}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileUpload}
+              accept="image/*"
+              className="hidden"
+            />
             <button
-              onClick={() => setSelectedImage(null)}
-              className="w-16 h-16 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center hover:border-gray-400"
+              onClick={handleUploadClick}
+              className={`w-16 h-16 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center hover:border-gray-400 ${
+                uploadedImage ? "ring-4 ring-primary ring-offset-2" : ""
+              }`}
             >
-              +
+              {uploadedImage ? (
+                <img 
+                  src={uploadedImage} 
+                  alt="Uploaded" 
+                  className="w-full h-full rounded-full object-cover"
+                />
+              ) : (
+                "+"
+              )}
             </button>
           </div>
         </div>
@@ -69,15 +106,6 @@ export const ProfileStep = ({
               {bio.length}/80
             </span>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-auto inline-flex gap-2"
-            onClick={() => setBio("AI generated bio coming soon!")}
-          >
-            <Sparkles className="h-4 w-4" />
-            Write my bio
-          </Button>
         </div>
       </div>
 
