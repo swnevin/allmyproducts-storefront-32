@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { JoinStep } from "@/components/onboarding/JoinStep";
 import { UsernameInput } from "@/components/onboarding/UsernameInput";
 import { TemplateSelection } from "@/components/onboarding/TemplateSelection";
@@ -9,7 +8,9 @@ const OnboardingSteps = {
   JOIN: 0,
   USERNAME: 1,
   THEME: 2,
-  SUCCESS: 3,
+  PROFILE: 3,
+  LINKS: 4,
+  SUCCESS: 5,
 } as const;
 
 type OnboardingStep = typeof OnboardingSteps[keyof typeof OnboardingSteps];
@@ -19,7 +20,6 @@ const Onboarding = () => {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [selectedTheme, setSelectedTheme] = useState("");
-  const navigate = useNavigate();
 
   const renderStep = () => {
     switch (step) {
@@ -29,6 +29,7 @@ const Onboarding = () => {
             email={email}
             setEmail={setEmail}
             onContinue={() => setStep(OnboardingSteps.USERNAME)}
+            skipText="I will do this later"
           />
         );
 
@@ -46,7 +47,24 @@ const Onboarding = () => {
           <TemplateSelection 
             selectedTheme={selectedTheme}
             onSelect={setSelectedTheme}
+            onContinue={() => setStep(OnboardingSteps.PROFILE)}
+            skipText="I will do this later"
+          />
+        );
+
+      case OnboardingSteps.PROFILE:
+        return (
+          <ProfileStep
+            onContinue={() => setStep(OnboardingSteps.LINKS)}
+            skipText="I will do this later"
+          />
+        );
+
+      case OnboardingSteps.LINKS:
+        return (
+          <LinksStep
             onContinue={() => setStep(OnboardingSteps.SUCCESS)}
+            skipText="I will do this later"
           />
         );
 

@@ -11,6 +11,13 @@ export const UsernameInput = ({
   onContinue: () => void;
 }) => {
   const isValidUsername = value.length >= 3 && /^[a-zA-Z0-9_-]+$/.test(value);
+  
+  const getHint = () => {
+    if (!value) return "Please enter a username";
+    if (value.length < 3) return "Username must be at least 3 characters";
+    if (!/^[a-zA-Z0-9_-]+$/.test(value)) return "Only letters, numbers, underscores and hyphens are allowed";
+    return "";
+  };
 
   return (
     <div className="space-y-8 max-w-md w-full">
@@ -20,24 +27,29 @@ export const UsernameInput = ({
       </div>
       <div className="space-y-6">
         <div className="relative mx-4">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 bg-gray-100 rounded-l-md px-2 border-r h-full">
-            allmyproducts.com/
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <span className="text-gray-500">allmyproducts.com/</span>
           </div>
           <Input 
             type="text" 
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder="username" 
-            className="pl-[155px]"
+            className="pl-[155px] ml-0"
           />
         </div>
-        <Button 
-          onClick={onContinue}
-          className="w-full bg-red-600 hover:bg-red-700"
-          disabled={!isValidUsername}
-        >
-          Continue
-        </Button>
+        <div className="px-4">
+          <Button 
+            onClick={onContinue}
+            className="w-full bg-red-600 hover:bg-red-700"
+            disabled={!isValidUsername}
+          >
+            Continue
+          </Button>
+          {!isValidUsername && value && (
+            <p className="text-sm text-red-500 mt-2 text-center">{getHint()}</p>
+          )}
+        </div>
       </div>
     </div>
   );
