@@ -10,6 +10,8 @@ export const UsernameInput = ({
   onChange: (value: string) => void;
   onContinue: () => void;
 }) => {
+  const isValidUsername = value.length >= 3 && /^[a-zA-Z0-9_-]+$/.test(value);
+
   return (
     <div className="space-y-8 max-w-md w-full">
       <div className="space-y-2 text-center">
@@ -17,7 +19,7 @@ export const UsernameInput = ({
         <p className="text-gray-600">This will be your unique URL</p>
       </div>
       <div className="space-y-6">
-        <div className="relative">
+        <div className="relative mx-4">
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 bg-gray-100 rounded-l-md px-2 border-r h-full">
             allmyproducts.com/
           </div>
@@ -32,6 +34,7 @@ export const UsernameInput = ({
         <Button 
           onClick={onContinue}
           className="w-full bg-red-600 hover:bg-red-700"
+          disabled={!isValidUsername}
         >
           Continue
         </Button>
