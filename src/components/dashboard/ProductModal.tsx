@@ -9,19 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
-
-interface Product {
-  id?: string;
-  title: string;
-  description: string;
-  image: string;
-  points: Array<{
-    x: number;
-    y: number;
-    title: string;
-    link: string;
-  }>;
-}
+import { Product } from "@/types/product";
 
 interface ProductModalProps {
   open: boolean;
