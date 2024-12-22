@@ -10,12 +10,20 @@ const Landing = () => {
       <header className="border-b">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Logo />
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/onboarding")}
-          >
-            Get Started
-          </Button>
+          <div className="flex gap-4">
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/login")}
+            >
+              Login
+            </Button>
+            <Button
+              onClick={() => navigate("/onboarding")}
+              className="bg-primary hover:bg-primary/90"
+            >
+              Get Started
+            </Button>
+          </div>
         </div>
       </header>
       <main className="flex-1 container mx-auto px-4 py-12">
