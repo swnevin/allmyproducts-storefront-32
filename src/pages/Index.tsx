@@ -1,12 +1,13 @@
-import { ProfileHeader } from "@/components/ProfileHeader";
-import { ProductGallery } from "@/components/ProductGallery";
+import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 to-pink-100">
-      <ProfileHeader />
-      <ProductGallery />
-    </div>
+    <DashboardLayout>
+      <div className="space-y-4">
+        <h1 className="text-2xl font-bold">Welcome to your dashboard</h1>
+        <p>Start managing your products and analyze your performance.</p>
+      </div>
+    </DashboardLayout>
   );
 };
 
