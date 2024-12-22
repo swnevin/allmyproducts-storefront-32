@@ -24,6 +24,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarProvider,
 } from "@/components/ui/sidebar";
 import { Menu, Share2, Settings, BarChart3, Package2, Paintbrush, UserCircle } from "lucide-react";
 import { useState } from "react";
@@ -108,38 +109,40 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
   const isMobile = useIsMobile();
 
   return (
-    <div className="min-h-screen flex w-full">
-      {isMobile ? (
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="fixed top-4 left-4">
-              <Menu className="h-5 w-5" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="p-0">
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        {isMobile ? (
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="fixed top-4 left-4">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="p-0">
+              <DashboardSidebarContent />
+            </SheetContent>
+          </Sheet>
+        ) : (
+          <Sidebar>
             <DashboardSidebarContent />
-          </SheetContent>
-        </Sheet>
-      ) : (
-        <Sidebar>
-          <DashboardSidebarContent />
-        </Sidebar>
-      )}
+          </Sidebar>
+        )}
 
-      <div className="flex-1 overflow-auto">
-        <div className="flex justify-end p-4 border-b">
-          <Button
-            onClick={() => setIsShareOpen(true)}
-            variant="outline"
-            className="gap-2"
-          >
-            <Share2 className="h-4 w-4" />
-            Share
-          </Button>
+        <div className="flex-1 overflow-auto">
+          <div className="flex justify-end p-4 border-b">
+            <Button
+              onClick={() => setIsShareOpen(true)}
+              variant="outline"
+              className="gap-2"
+            >
+              <Share2 className="h-4 w-4" />
+              Share
+            </Button>
+          </div>
+          <main className="p-6">{children}</main>
         </div>
-        <main className="p-6">{children}</main>
+        <SharePage open={isShareOpen} onOpenChange={setIsShareOpen} />
       </div>
-      <SharePage open={isShareOpen} onOpenChange={setIsShareOpen} />
-    </div>
+    </SidebarProvider>
   );
 };
