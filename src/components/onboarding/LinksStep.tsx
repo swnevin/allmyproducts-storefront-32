@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { Instagram, Youtube, TikTok, Link as LinkIcon } from "lucide-react";
+import { Instagram, Youtube, Link as LinkIcon } from "lucide-react";
 
 export const LinksStep = ({ 
   onContinue,
@@ -30,7 +30,7 @@ export const LinksStep = ({
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
-                <TikTok className="text-white h-5 w-5" />
+                <span className="text-white font-bold text-sm">TT</span>
               </div>
               <Input 
                 placeholder="TikTok username"
