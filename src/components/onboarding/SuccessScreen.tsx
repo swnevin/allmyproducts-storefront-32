@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import confetti from 'canvas-confetti';
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { SharePage } from "@/components/SharePage";
 
 export const SuccessScreen = () => {
   const navigate = useNavigate();
+  const [isShareOpen, setIsShareOpen] = useState(false);
 
   useEffect(() => {
     confetti({
@@ -23,18 +25,22 @@ export const SuccessScreen = () => {
       <div className="flex gap-4">
         <Button 
           variant="outline"
-          onClick={() => navigate("/edit")}
+          onClick={() => navigate("/storefront")}
           className="flex-1"
         >
           Continue Editing
         </Button>
         <Button 
-          onClick={() => navigate("/share")}
-          className="flex-1 bg-red-600 hover:bg-red-700"
+          onClick={() => setIsShareOpen(true)}
+          className="flex-1 bg-primary hover:bg-primary/90"
         >
           Share Page
         </Button>
       </div>
+      <SharePage 
+        open={isShareOpen}
+        onOpenChange={setIsShareOpen}
+      />
     </div>
   );
 };
