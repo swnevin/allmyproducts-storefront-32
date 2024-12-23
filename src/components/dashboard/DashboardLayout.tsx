@@ -26,10 +26,13 @@ import {
   SidebarMenuItem,
   SidebarProvider,
 } from "@/components/ui/sidebar";
+import { useToast } from "@/hooks/use-toast";
 import { Menu, Share2, Settings, BarChart3, Package2, Paintbrush, UserCircle } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { FeedbackDialog } from "./FeedbackDialog";
+import { SupportDialog } from "./SupportDialog";
 
 const menuItems = [
   { title: "Products", icon: Package2, value: "products" },
@@ -40,6 +43,18 @@ const menuItems = [
 
 const DashboardSidebarContent = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [isSupportOpen, setIsSupportOpen] = useState(false);
+  
+  const handleSignOut = () => {
+    toast({
+      title: "Signed out",
+      description: "You have been successfully signed out.",
+    });
+    // In a real app, this would handle the actual sign out logic
+    navigate("/");
+  };
   
   return (
     <>
@@ -80,44 +95,35 @@ const DashboardSidebarContent = () => {
             >
               Create a new AllMyProducts page
             </DropdownMenuItem>
-            <DropdownMenuItem 
-              className="text-muted-foreground cursor-not-allowed"
-              disabled
-            >
+            <DropdownMenuItem onClick={() => navigate("/dashboard/account")}>
               My account
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => navigate("/billing")}>
               Billing
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
-              className="text-muted-foreground cursor-not-allowed"
-              disabled
-            >
+            <DropdownMenuItem onClick={() => setIsSupportOpen(true)}>
               Contact support
             </DropdownMenuItem>
-            <DropdownMenuItem 
-              className="text-muted-foreground cursor-not-allowed"
-              disabled
-            >
-              Help Center
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              className="text-muted-foreground cursor-not-allowed"
-              disabled
-            >
+            <DropdownMenuItem onClick={() => setIsFeedbackOpen(true)}>
               Submit feedback
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
-              className="text-muted-foreground cursor-not-allowed"
-              disabled
-            >
+            <DropdownMenuItem onClick={handleSignOut}>
               Sign out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarFooter>
+
+      <FeedbackDialog
+        open={isFeedbackOpen}
+        onOpenChange={setIsFeedbackOpen}
+      />
+      <SupportDialog
+        open={isSupportOpen}
+        onOpenChange={setIsSupportOpen}
+      />
     </>
   );
 };

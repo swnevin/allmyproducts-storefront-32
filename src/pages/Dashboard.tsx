@@ -3,6 +3,7 @@ import { Products } from "@/pages/dashboard/Products";
 import { Analytics } from "@/pages/dashboard/Analytics";
 import { Appearance } from "@/pages/dashboard/Appearance";
 import { Settings } from "@/pages/dashboard/Settings";
+import { Account } from "@/pages/dashboard/Account";
 import { useLocation } from "react-router-dom";
 
 const Dashboard = () => {
@@ -19,6 +20,8 @@ const Dashboard = () => {
         return <Appearance />;
       case 'settings':
         return <Settings />;
+      case 'account':
+        return <Account />;
       default:
         return <Products />;
     }
