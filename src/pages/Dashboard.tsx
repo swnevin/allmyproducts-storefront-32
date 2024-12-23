@@ -2,6 +2,14 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { Products } from "@/pages/dashboard/Products";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLocation } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Analytics = () => {
   // Example data - in a real app this would come from an API
@@ -79,24 +87,168 @@ const Analytics = () => {
 };
 
 const Appearance = () => {
+  const [displayName, setDisplayName] = useState("Sarah's Fashion Picks");
+  const [bio, setBio] = useState("Fashion enthusiast sharing my favorite outfits and accessories. All products linked below!");
+  const [selectedTheme, setSelectedTheme] = useState("default");
+  const [avatarUrl, setAvatarUrl] = useState("https://images.unsplash.com/photo-1649972904349-6e44c42644a7");
+  const { toast } = useToast();
+
+  const themes = [
+    { id: "default", name: "Default", color: "bg-primary" },
+    { id: "blue", name: "Ocean Blue", color: "bg-blue-500" },
+    { id: "green", name: "Forest Green", color: "bg-green-500" },
+    { id: "purple", name: "Royal Purple", color: "bg-purple-500" },
+  ];
+
+  const handleSaveAppearance = () => {
+    // In a real app, this would save to the backend
+    toast({
+      title: "Changes saved",
+      description: "Your appearance settings have been updated.",
+    });
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // In a real app, this would upload to a storage service
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Appearance</h2>
-      <div className="max-w-2xl">
-        {/* We'll implement appearance settings in the next iteration */}
-        <p>Appearance settings coming soon...</p>
+      <div className="max-w-2xl space-y-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Profile Picture</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-4">
+              <Avatar className="w-24 h-24">
+                <AvatarImage src={avatarUrl} />
+                <AvatarFallback>PFP</AvatarFallback>
+              </Avatar>
+              <div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  id="avatar-upload"
+                  onChange={handleImageUpload}
+                />
+                <Button
+                  variant="outline"
+                  onClick={() => document.getElementById("avatar-upload")?.click()}
+                >
+                  Change Image
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Profile Information</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="displayName">Display Name</Label>
+              <Input
+                id="displayName"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="bio">Bio</Label>
+              <Textarea
+                id="bio"
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                className="min-h-[100px]"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Theme</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              {themes.map((theme) => (
+                <button
+                  key={theme.id}
+                  onClick={() => setSelectedTheme(theme.id)}
+                  className={`p-4 rounded-lg border-2 transition-all ${
+                    selectedTheme === theme.id
+                      ? "border-primary"
+                      : "border-transparent hover:border-gray-200"
+                  }`}
+                >
+                  <div className={`w-full h-12 rounded-md ${theme.color} mb-2`} />
+                  <p className="text-sm font-medium">{theme.name}</p>
+                </button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Button onClick={handleSaveAppearance} className="w-full">
+          Save Changes
+        </Button>
       </div>
     </div>
   );
 };
 
 const Settings = () => {
+  const [popupEnabled, setPopupEnabled] = useState(true);
+  const { toast } = useToast();
+
+  const handleSaveSettings = () => {
+    // In a real app, this would save to the backend
+    toast({
+      title: "Settings saved",
+      description: "Your settings have been updated successfully.",
+    });
+  };
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Settings</h2>
       <div className="max-w-2xl">
-        {/* We'll implement settings in the next iteration */}
-        <p>Settings content coming soon...</p>
+        <Card>
+          <CardHeader>
+            <CardTitle>Page Settings</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="popup-switch">AllMyLinks Popup</Label>
+                <p className="text-sm text-muted-foreground">
+                  Show a popup when visitors first arrive on your page
+                </p>
+              </div>
+              <Switch
+                id="popup-switch"
+                checked={popupEnabled}
+                onCheckedChange={setPopupEnabled}
+              />
+            </div>
+            <Button onClick={handleSaveSettings} className="w-full">
+              Save Changes
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
