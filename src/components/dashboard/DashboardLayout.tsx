@@ -69,7 +69,10 @@ const DashboardSidebarContent = () => {
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <button onClick={() => navigate(`/dashboard/${item.value}`)}>
+                    <button 
+                      onClick={() => navigate(`/dashboard/${item.value}`)}
+                      className="transition-colors hover:bg-sidebar-accent/80"
+                    >
                       <item.icon />
                       <span>{item.title}</span>
                     </button>
@@ -83,7 +86,10 @@ const DashboardSidebarContent = () => {
       <SidebarFooter className="border-t p-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="w-full justify-start gap-2">
+            <Button 
+              variant="ghost" 
+              className="w-full justify-start gap-2 hover:bg-sidebar-accent/80 transition-colors"
+            >
               <UserCircle className="h-5 w-5" />
               <span>Profile</span>
             </Button>
@@ -95,7 +101,11 @@ const DashboardSidebarContent = () => {
             >
               Create a new AllMyProducts page
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate("/dashboard/account")}>
+            <DropdownMenuItem 
+              className="cursor-not-allowed text-muted-foreground"
+              disabled
+              onClick={() => navigate("/dashboard/account")}
+            >
               My account
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => navigate("/billing")}>
@@ -109,7 +119,10 @@ const DashboardSidebarContent = () => {
               Submit feedback
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleSignOut}>
+            <DropdownMenuItem 
+              onClick={handleSignOut}
+              className="hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/50 dark:hover:text-red-400"
+            >
               Sign out
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -138,11 +151,11 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
         {isMobile ? (
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="fixed top-4 left-4">
+              <Button variant="ghost" size="icon" className="fixed top-4 left-4 z-40">
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0">
+            <SheetContent side="left" className="p-0 w-[280px]">
               <DashboardSidebarContent />
             </SheetContent>
           </Sheet>
@@ -157,7 +170,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
             <Button
               onClick={() => setIsShareOpen(true)}
               variant="outline"
-              className="gap-2"
+              className="gap-2 hover:bg-accent/80 transition-colors"
             >
               <Share2 className="h-4 w-4" />
               Share

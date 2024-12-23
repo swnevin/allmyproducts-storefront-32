@@ -45,7 +45,7 @@ export const Account = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <h2 className="text-2xl font-bold">Account Settings</h2>
       
       <Card>
@@ -95,7 +95,7 @@ export const Account = () => {
                   </FormItem>
                 )}
               />
-              <Button type="submit">Update Password</Button>
+              <Button type="submit" className="w-full sm:w-auto">Update Password</Button>
             </form>
           </Form>
         </CardContent>
@@ -112,6 +112,7 @@ export const Account = () => {
           <Button
             variant="destructive"
             onClick={handleDeleteAccount}
+            className="w-full sm:w-auto hover:bg-red-600 transition-colors"
           >
             Delete Account
           </Button>

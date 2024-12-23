@@ -39,7 +39,7 @@ export const SupportDialog = ({ open, onOpenChange }: SupportDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Contact Support</DialogTitle>
         </DialogHeader>

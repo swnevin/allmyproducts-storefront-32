@@ -36,7 +36,7 @@ export const FeedbackDialog = ({ open, onOpenChange }: FeedbackDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Submit Feedback</DialogTitle>
         </DialogHeader>
