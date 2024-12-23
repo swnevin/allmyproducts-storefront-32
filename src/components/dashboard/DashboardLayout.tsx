@@ -74,27 +74,45 @@ const DashboardSidebarContent = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem onClick={() => navigate("/new")}>
+            <DropdownMenuItem 
+              className="text-muted-foreground cursor-not-allowed"
+              disabled
+            >
               Create a new AllMyProducts page
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate("/account")}>
+            <DropdownMenuItem 
+              className="text-muted-foreground cursor-not-allowed"
+              disabled
+            >
               My account
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => navigate("/billing")}>
               Billing
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => window.open("/support", "_blank")}>
+            <DropdownMenuItem 
+              className="text-muted-foreground cursor-not-allowed"
+              disabled
+            >
               Contact support
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => window.open("/help", "_blank")}>
+            <DropdownMenuItem 
+              className="text-muted-foreground cursor-not-allowed"
+              disabled
+            >
               Help Center
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => window.open("/feedback", "_blank")}>
+            <DropdownMenuItem 
+              className="text-muted-foreground cursor-not-allowed"
+              disabled
+            >
               Submit feedback
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => navigate("/logout")}>
+            <DropdownMenuItem 
+              className="text-muted-foreground cursor-not-allowed"
+              disabled
+            >
               Sign out
             </DropdownMenuItem>
           </DropdownMenuContent>

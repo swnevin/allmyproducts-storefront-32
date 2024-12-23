@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Landing from "./pages/Landing";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
+import Billing from "./pages/Billing";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/storefront" element={<Index />} />
           <Route path="/dashboard/*" element={<Dashboard />} />
+          <Route path="/billing" element={<Billing />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
