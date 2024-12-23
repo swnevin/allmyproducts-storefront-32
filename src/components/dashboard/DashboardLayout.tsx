@@ -30,7 +30,6 @@ import { Menu, Share2, Settings, BarChart3, Package2, Paintbrush, UserCircle } f
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const menuItems = [
   { title: "Products", icon: Package2, value: "products" },
@@ -105,7 +104,7 @@ const DashboardSidebarContent = () => {
   );
 };
 
-export const DashboardLayout = ({ children, defaultTab = "products" }: { children: React.ReactNode, defaultTab?: string }) => {
+export const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const [isShareOpen, setIsShareOpen] = useState(false);
   const isMobile = useIsMobile();
 
@@ -141,16 +140,7 @@ export const DashboardLayout = ({ children, defaultTab = "products" }: { childre
             </Button>
           </div>
           <main className="p-6">
-            <Tabs defaultValue={defaultTab} className="space-y-4">
-              <TabsList>
-                {menuItems.map((item) => (
-                  <TabsTrigger key={item.value} value={item.value}>
-                    {item.title}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-              {children}
-            </Tabs>
+            {children}
           </main>
         </div>
         <SharePage open={isShareOpen} onOpenChange={setIsShareOpen} />
