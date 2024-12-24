@@ -46,13 +46,14 @@ const DashboardSidebarContent = () => {
   const { toast } = useToast();
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isSupportOpen, setIsSupportOpen] = useState(false);
+  const location = useLocation();
+  const currentPath = location.pathname.split('/').pop();
   
   const handleSignOut = () => {
     toast({
       title: "Signed out",
       description: "You have been successfully signed out.",
     });
-    // In a real app, this would handle the actual sign out logic
     navigate("/");
   };
   
@@ -71,7 +72,9 @@ const DashboardSidebarContent = () => {
                   <SidebarMenuButton asChild>
                     <button 
                       onClick={() => navigate(`/dashboard/${item.value}`)}
-                      className="transition-colors hover:bg-sidebar-accent/80"
+                      className={`w-full transition-colors hover:bg-accent/80 ${
+                        currentPath === item.value ? 'bg-accent/60' : ''
+                      }`}
                     >
                       <item.icon />
                       <span>{item.title}</span>
@@ -88,7 +91,7 @@ const DashboardSidebarContent = () => {
           <DropdownMenuTrigger asChild>
             <Button 
               variant="ghost" 
-              className="w-full justify-start gap-2 hover:bg-sidebar-accent/80 transition-colors"
+              className="w-full justify-start gap-2 hover:bg-accent/80 transition-colors"
             >
               <UserCircle className="h-5 w-5" />
               <span>Profile</span>
@@ -101,11 +104,7 @@ const DashboardSidebarContent = () => {
             >
               Create a new AllMyProducts page
             </DropdownMenuItem>
-            <DropdownMenuItem 
-              className="cursor-not-allowed text-muted-foreground"
-              disabled
-              onClick={() => navigate("/dashboard/account")}
-            >
+            <DropdownMenuItem onClick={() => navigate("/dashboard/account")}>
               My account
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => navigate("/billing")}>
@@ -129,14 +128,19 @@ const DashboardSidebarContent = () => {
         </DropdownMenu>
       </SidebarFooter>
 
-      <FeedbackDialog
-        open={isFeedbackOpen}
-        onOpenChange={setIsFeedbackOpen}
-      />
-      <SupportDialog
-        open={isSupportOpen}
-        onOpenChange={setIsSupportOpen}
-      />
+      {/* Using portals for dialogs to prevent freezing */}
+      {isFeedbackOpen && (
+        <FeedbackDialog
+          open={isFeedbackOpen}
+          onOpenChange={setIsFeedbackOpen}
+        />
+      )}
+      {isSupportOpen && (
+        <SupportDialog
+          open={isSupportOpen}
+          onOpenChange={setIsSupportOpen}
+        />
+      )}
     </>
   );
 };
