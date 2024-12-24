@@ -3,20 +3,124 @@ import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { ProductModal } from "@/components/dashboard/ProductModal";
 import { Product } from "@/types/product";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useSessionContext } from '@supabase/auth-helpers-react';
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 export const Products = () => {
-  const [products, setProducts] = useState<Product[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const { session } = useSessionContext();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
-  const handleDelete = (id: string) => {
-    setProducts(products.filter(p => p.id !== id));
-  };
+  // Redirect if not authenticated
+  if (!session) {
+    navigate("/login");
+    return null;
+  }
 
-  const handleEdit = (product: Product) => {
-    setEditingProduct(product);
-    setIsModalOpen(true);
-  };
+  const { data: products = [], isLoading } = useQuery({
+    queryKey: ['products'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('user_id', session.user.id);
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const createProduct = useMutation({
+    mutationFn: async (product: Omit<Product, 'id'>) => {
+      const { data, error } = await supabase
+        .from('products')
+        .insert([{ ...product, user_id: session.user.id }])
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      toast({
+        title: "Success",
+        description: "Product created successfully",
+      });
+      setIsModalOpen(false);
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to create product",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateProduct = useMutation({
+    mutationFn: async (product: Product) => {
+      const { data, error } = await supabase
+        .from('products')
+        .update(product)
+        .eq('id', product.id)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      toast({
+        title: "Success",
+        description: "Product updated successfully",
+      });
+      setIsModalOpen(false);
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update product",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteProduct = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      toast({
+        title: "Success",
+        description: "Product deleted successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to delete product",
+        variant: "destructive",
+      });
+    },
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -49,14 +153,17 @@ export const Products = () => {
               <Button
                 size="sm"
                 variant="secondary"
-                onClick={() => handleEdit(product)}
+                onClick={() => {
+                  setEditingProduct(product);
+                  setIsModalOpen(true);
+                }}
               >
                 <Pencil className="w-4 h-4" />
               </Button>
               <Button
                 size="sm"
                 variant="destructive"
-                onClick={() => handleDelete(product.id)}
+                onClick={() => deleteProduct.mutate(product.id)}
               >
                 <Trash2 className="w-4 h-4" />
               </Button>
@@ -74,11 +181,10 @@ export const Products = () => {
         product={editingProduct}
         onSave={(product) => {
           if (editingProduct) {
-            setProducts(products.map(p => p.id === product.id ? product : p));
+            updateProduct.mutate(product);
           } else {
-            setProducts([...products, { ...product, id: Date.now().toString() }]);
+            createProduct.mutate(product);
           }
-          setIsModalOpen(false);
         }}
       />
     </div>

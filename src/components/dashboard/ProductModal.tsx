@@ -55,6 +55,7 @@ export const ProductModal = ({
               onChange={(e) =>
                 setFormData({ ...formData, title: e.target.value })
               }
+              required
             />
           </div>
           <div className="space-y-2">
