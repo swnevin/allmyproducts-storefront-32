@@ -29,7 +29,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Menu, Share2, Settings, BarChart3, Package2, Paintbrush, UserCircle } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { FeedbackDialog } from "./FeedbackDialog";
 import { SupportDialog } from "./SupportDialog";
