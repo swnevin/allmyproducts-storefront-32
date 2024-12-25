@@ -69,12 +69,15 @@ const Onboarding = () => {
         title: "Profile saved",
         description: "Your profile has been updated successfully",
       });
+      
+      return true;
     } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
         variant: "destructive",
       });
+      return false;
     }
   };
 
@@ -94,11 +97,13 @@ const Onboarding = () => {
         break;
       case OnboardingSteps.LINKS:
         setSocialLinks(stepData);
-        await saveOnboardingData();
-        setStep(OnboardingSteps.SUCCESS);
+        const saved = await saveOnboardingData();
+        if (saved) {
+          setStep(OnboardingSteps.SUCCESS);
+        }
         break;
       case OnboardingSteps.SUCCESS:
-        navigate("/storefront");
+        navigate("/dashboard");
         break;
     }
   };
