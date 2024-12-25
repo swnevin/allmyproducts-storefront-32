@@ -1,5 +1,4 @@
 import { Logo } from "@/components/Logo";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { Auth } from '@supabase/auth-ui-react';
@@ -20,7 +19,11 @@ const Login = () => {
   }, [session, navigate]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+      </div>
+    );
   }
 
   return (
@@ -40,6 +43,8 @@ const Login = () => {
             supabaseClient={supabase}
             appearance={{ theme: ThemeSupa }}
             providers={[]}
+            view="magic_link"
+            showLinks={false}
             redirectTo={`${window.location.origin}/dashboard`}
           />
         </div>
