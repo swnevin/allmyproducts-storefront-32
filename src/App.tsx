@@ -21,13 +21,21 @@ const App = () => {
   const [isNewUser, setIsNewUser] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        checkIfNewUser(session.user.id);
+    const checkSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          await checkIfNewUser(session.user.id);
+        }
+      } catch (error) {
+        console.error('Error checking session:', error);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
-    });
+    };
+
+    checkSession();
 
     const {
       data: { subscription },
@@ -42,17 +50,26 @@ const App = () => {
   }, []);
 
   const checkIfNewUser = async (userId: string) => {
-    const { data } = await supabase
-      .from('profiles')
-      .select('theme')
-      .eq('id', userId)
-      .single();
-    
-    setIsNewUser(!data?.theme);
+    try {
+      const { data } = await supabase
+        .from('profiles')
+        .select('theme')
+        .eq('id', userId)
+        .single();
+      
+      setIsNewUser(!data?.theme);
+    } catch (error) {
+      console.error('Error checking if new user:', error);
+      setIsNewUser(false);
+    }
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+      </div>
+    );
   }
 
   return (
