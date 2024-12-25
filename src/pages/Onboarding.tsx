@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
-import { JoinStep } from "@/components/onboarding/JoinStep";
 import { UsernameInput } from "@/components/onboarding/UsernameInput";
 import { TemplateSelection } from "@/components/onboarding/TemplateSelection";
 import { ProfileStep } from "@/components/onboarding/ProfileStep";
@@ -11,12 +10,11 @@ import { SuccessScreen } from "@/components/onboarding/SuccessScreen";
 import { useToast } from "@/hooks/use-toast";
 
 const OnboardingSteps = {
-  JOIN: 0,
-  USERNAME: 1,
-  THEME: 2,
-  PROFILE: 3,
-  LINKS: 4,
-  SUCCESS: 5,
+  USERNAME: 0,
+  THEME: 1,
+  PROFILE: 2,
+  LINKS: 3,
+  SUCCESS: 4,
 } as const;
 
 type OnboardingStep = typeof OnboardingSteps[keyof typeof OnboardingSteps];
@@ -35,7 +33,6 @@ const Onboarding = () => {
   const { session } = useSessionContext();
   const { toast } = useToast();
   const [step, setStep] = useState<OnboardingStep>(OnboardingSteps.USERNAME);
-  const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [selectedTheme, setSelectedTheme] = useState("");
   const [profileData, setProfileData] = useState<Partial<OnboardingData>>({});
@@ -131,7 +128,7 @@ const Onboarding = () => {
       case OnboardingSteps.PROFILE:
         return (
           <ProfileStep
-            onContinue={(data) => handleStepComplete(data)}
+            onContinue={handleStepComplete}
             skipText="I will do this later"
           />
         );
@@ -139,7 +136,7 @@ const Onboarding = () => {
       case OnboardingSteps.LINKS:
         return (
           <LinksStep
-            onContinue={(links) => handleStepComplete(links)}
+            onContinue={handleStepComplete}
             skipText="I will do this later"
           />
         );

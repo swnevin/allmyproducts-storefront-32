@@ -34,8 +34,13 @@ export const Products = () => {
       if (error) throw error;
       return data.map(product => ({
         ...product,
-        points: Array.isArray(product.points) ? product.points : []
-      }));
+        points: (product.points as any[] || []).map(point => ({
+          x: point.x || 0,
+          y: point.y || 0,
+          title: point.title || '',
+          link: point.link || ''
+        }))
+      })) as Product[];
     },
   });
 
@@ -148,7 +153,7 @@ export const Products = () => {
             className="relative group aspect-square rounded-lg overflow-hidden border"
           >
             <img 
-              src={product.image} 
+              src={product.image || '/placeholder.svg'} 
               alt={product.title}
               className="w-full h-full object-cover"
             />
