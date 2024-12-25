@@ -5,6 +5,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { AtSign } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Landing = () => {
   const [email, setEmail] = useState("");
@@ -42,6 +43,9 @@ const Landing = () => {
       <header className="border-b">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Logo />
+          <Link to="/login">
+            <Button variant="outline">Login</Button>
+          </Link>
         </div>
       </header>
       <main className="flex-1 container mx-auto px-4 py-12">

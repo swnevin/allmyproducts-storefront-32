@@ -48,7 +48,7 @@ const Onboarding = () => {
   }, [session, navigate]);
 
   const saveOnboardingData = async () => {
-    if (!session?.user.id) return;
+    if (!session?.user.id) return false;
 
     try {
       const { error } = await supabase

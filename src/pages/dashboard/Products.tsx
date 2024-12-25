@@ -32,7 +32,10 @@ export const Products = () => {
         .eq('user_id', session.user.id);
       
       if (error) throw error;
-      return data;
+      return data.map(product => ({
+        ...product,
+        points: Array.isArray(product.points) ? product.points : []
+      }));
     },
   });
 
