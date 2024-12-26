@@ -23,17 +23,21 @@ const App = () => {
   useEffect(() => {
     let mounted = true;
 
+    // Function to check if user is new
     const checkIfNewUser = async (userId: string) => {
+      if (!mounted) return;
+      
       try {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('profiles')
           .select('theme')
           .eq('id', userId)
           .single();
         
-        if (mounted) {
-          setIsNewUser(!data?.theme);
-        }
+        if (!mounted) return;
+        if (error) throw error;
+        
+        setIsNewUser(!data?.theme);
       } catch (error) {
         console.error('Error checking if new user:', error);
         if (mounted) {
@@ -43,38 +47,48 @@ const App = () => {
     };
 
     // Initial session check
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (mounted) {
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          checkIfNewUser(session.user.id);
-        }
-        setIsLoading(false);
-      }
-    });
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (mounted) {
+    const initializeSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!mounted) return;
+        
         setUser(session?.user ?? null);
         if (session?.user) {
           await checkIfNewUser(session.user.id);
-        } else {
-          setIsNewUser(false);
         }
-        setIsLoading(false);
+      } catch (error) {
+        console.error('Error initializing session:', error);
+      } finally {
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
+    };
+
+    // Start initialization
+    initializeSession();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!mounted) return;
+      
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        await checkIfNewUser(session.user.id);
+      } else {
+        setIsNewUser(false);
+      }
+      setIsLoading(false);
     });
 
+    // Cleanup function
     return () => {
       mounted = false;
       subscription.unsubscribe();
     };
   }, []);
 
-  // Show loading spinner only during initial load
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
