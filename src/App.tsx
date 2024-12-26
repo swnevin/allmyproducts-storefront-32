@@ -19,19 +19,28 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [isNewUser, setIsNewUser] = useState(false);
+  const [sessionChecked, setSessionChecked] = useState(false);
 
   useEffect(() => {
+    let mounted = true;
+
     const checkSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          await checkIfNewUser(session.user.id);
+        if (mounted) {
+          setUser(session?.user ?? null);
+          if (session?.user) {
+            await checkIfNewUser(session.user.id);
+          }
+          setSessionChecked(true);
+          setIsLoading(false);
         }
       } catch (error) {
         console.error('Error checking session:', error);
-      } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setSessionChecked(true);
+          setIsLoading(false);
+        }
       }
     };
 
@@ -40,13 +49,18 @@ const App = () => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        await checkIfNewUser(session.user.id);
+      if (mounted) {
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          await checkIfNewUser(session.user.id);
+        }
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const checkIfNewUser = async (userId: string) => {
@@ -64,7 +78,8 @@ const App = () => {
     }
   };
 
-  if (isLoading) {
+  // Only show loading state for the first session check
+  if (!sessionChecked) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
