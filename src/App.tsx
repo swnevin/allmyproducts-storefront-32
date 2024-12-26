@@ -44,8 +44,6 @@ const App = () => {
       }
     };
 
-    checkSession();
-
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
@@ -53,9 +51,15 @@ const App = () => {
         setUser(session?.user ?? null);
         if (session?.user) {
           await checkIfNewUser(session.user.id);
+        } else {
+          setIsNewUser(false);
         }
+        setSessionChecked(true);
+        setIsLoading(false);
       }
     });
+
+    checkSession();
 
     return () => {
       mounted = false;

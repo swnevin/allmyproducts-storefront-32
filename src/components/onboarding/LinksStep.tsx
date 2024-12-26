@@ -20,12 +20,11 @@ export const LinksStep = ({
   onContinue,
   skipText
 }: { 
-  onContinue: () => void;
+  onContinue: (links: SocialLink[]) => void;
   skipText: string;
 }) => {
-  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([
-    { id: '1', type: 'tiktok', username: '', icon: <span className="text-white font-bold text-sm">TT</span> },
-  ]);
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const availableSocials = [
     { type: 'instagram', icon: <Instagram className="text-white h-5 w-5" />, bgColor: 'bg-pink-600' },
@@ -55,6 +54,15 @@ export const LinksStep = ({
   const getBgColorForType = (type: string) => {
     const social = availableSocials.find(s => s.type === type);
     return social?.bgColor || 'bg-black';
+  };
+
+  const handleContinue = async () => {
+    setIsLoading(true);
+    try {
+      onContinue(socialLinks);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -107,18 +115,19 @@ export const LinksStep = ({
           </div>
         </div>
       </div>
-
       <div className="space-y-4">
         <Button 
-          onClick={onContinue}
+          onClick={handleContinue}
           className="w-full bg-primary hover:bg-primary/90"
+          disabled={isLoading}
         >
-          Continue
+          {isLoading ? "Saving..." : "Continue"}
         </Button>
         <Button
           variant="outline"
-          onClick={onContinue}
+          onClick={() => onContinue([])}
           className="w-full"
+          disabled={isLoading}
         >
           {skipText}
         </Button>

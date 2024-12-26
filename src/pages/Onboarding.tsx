@@ -22,10 +22,10 @@ type OnboardingStep = typeof OnboardingSteps[keyof typeof OnboardingSteps];
 type OnboardingData = {
   username: string;
   theme: string;
-  title: string;
-  bio: string;
-  avatar_url: string;
-  social_links: any[];
+  title?: string;
+  bio?: string;
+  avatar_url?: string;
+  social_links?: any[];
 };
 
 const Onboarding = () => {
@@ -33,30 +33,25 @@ const Onboarding = () => {
   const { session } = useSessionContext();
   const { toast } = useToast();
   const [step, setStep] = useState<OnboardingStep>(OnboardingSteps.USERNAME);
-  const [username, setUsername] = useState("");
-  const [selectedTheme, setSelectedTheme] = useState("");
-  const [profileData, setProfileData] = useState<Partial<OnboardingData>>({});
-  const [socialLinks, setSocialLinks] = useState([]);
+  const [onboardingData, setOnboardingData] = useState<OnboardingData>({
+    username: "",
+    theme: "",
+  });
 
   useEffect(() => {
-    if (!session) {
+    if (!session?.user) {
       navigate("/");
     }
   }, [session, navigate]);
 
-  const saveOnboardingData = async () => {
+  const saveOnboardingData = async (data: Partial<OnboardingData>) => {
     if (!session?.user.id) return false;
 
     try {
       const { error } = await supabase
         .from("profiles")
         .update({
-          username,
-          theme: selectedTheme,
-          title: profileData.title,
-          bio: profileData.bio,
-          avatar_url: profileData.avatar_url,
-          social_links: socialLinks,
+          ...data
         })
         .eq("id", session.user.id);
 
@@ -78,26 +73,29 @@ const Onboarding = () => {
     }
   };
 
-  const handleStepComplete = async (stepData?: any) => {
+  const handleStepComplete = async (stepData: any) => {
+    let success = true;
+    
     switch (step) {
       case OnboardingSteps.USERNAME:
-        setUsername(stepData);
-        setStep(OnboardingSteps.THEME);
+        setOnboardingData(prev => ({ ...prev, username: stepData }));
+        success = await saveOnboardingData({ username: stepData });
+        if (success) setStep(OnboardingSteps.THEME);
         break;
       case OnboardingSteps.THEME:
-        setSelectedTheme(stepData);
-        setStep(OnboardingSteps.PROFILE);
+        setOnboardingData(prev => ({ ...prev, theme: stepData }));
+        success = await saveOnboardingData({ theme: stepData });
+        if (success) setStep(OnboardingSteps.PROFILE);
         break;
       case OnboardingSteps.PROFILE:
-        setProfileData(stepData);
-        setStep(OnboardingSteps.LINKS);
+        setOnboardingData(prev => ({ ...prev, ...stepData }));
+        success = await saveOnboardingData(stepData);
+        if (success) setStep(OnboardingSteps.LINKS);
         break;
       case OnboardingSteps.LINKS:
-        setSocialLinks(stepData);
-        const saved = await saveOnboardingData();
-        if (saved) {
-          setStep(OnboardingSteps.SUCCESS);
-        }
+        setOnboardingData(prev => ({ ...prev, social_links: stepData }));
+        success = await saveOnboardingData({ social_links: stepData });
+        if (success) setStep(OnboardingSteps.SUCCESS);
         break;
       case OnboardingSteps.SUCCESS:
         navigate("/dashboard");
@@ -110,18 +108,18 @@ const Onboarding = () => {
       case OnboardingSteps.USERNAME:
         return (
           <UsernameInput 
-            value={username}
-            onChange={setUsername}
-            onContinue={() => handleStepComplete(username)}
+            value={onboardingData.username}
+            onChange={setOnboardingData}
+            onContinue={handleStepComplete}
           />
         );
 
       case OnboardingSteps.THEME:
         return (
           <TemplateSelection 
-            selectedTheme={selectedTheme}
-            onSelect={setSelectedTheme}
-            onContinue={() => handleStepComplete(selectedTheme)}
+            selectedTheme={onboardingData.theme}
+            onSelect={setOnboardingData}
+            onContinue={handleStepComplete}
           />
         );
 
