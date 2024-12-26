@@ -78,7 +78,7 @@ const App = () => {
     }
   };
 
-  // Only show loading state for the first session check
+  // Show loading spinner only during initial session check
   if (!sessionChecked) {
     return (
       <div className="min-h-screen flex items-center justify-center">
