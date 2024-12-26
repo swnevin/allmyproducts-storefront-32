@@ -19,31 +19,41 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [isNewUser, setIsNewUser] = useState(false);
-  const [sessionChecked, setSessionChecked] = useState(false);
 
   useEffect(() => {
     let mounted = true;
 
-    const checkSession = async () => {
+    const checkIfNewUser = async (userId: string) => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data } = await supabase
+          .from('profiles')
+          .select('theme')
+          .eq('id', userId)
+          .single();
+        
         if (mounted) {
-          setUser(session?.user ?? null);
-          if (session?.user) {
-            await checkIfNewUser(session.user.id);
-          }
-          setSessionChecked(true);
-          setIsLoading(false);
+          setIsNewUser(!data?.theme);
         }
       } catch (error) {
-        console.error('Error checking session:', error);
+        console.error('Error checking if new user:', error);
         if (mounted) {
-          setSessionChecked(true);
-          setIsLoading(false);
+          setIsNewUser(false);
         }
       }
     };
 
+    // Initial session check
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (mounted) {
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          checkIfNewUser(session.user.id);
+        }
+        setIsLoading(false);
+      }
+    });
+
+    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
@@ -54,12 +64,9 @@ const App = () => {
         } else {
           setIsNewUser(false);
         }
-        setSessionChecked(true);
         setIsLoading(false);
       }
     });
-
-    checkSession();
 
     return () => {
       mounted = false;
@@ -67,23 +74,8 @@ const App = () => {
     };
   }, []);
 
-  const checkIfNewUser = async (userId: string) => {
-    try {
-      const { data } = await supabase
-        .from('profiles')
-        .select('theme')
-        .eq('id', userId)
-        .single();
-      
-      setIsNewUser(!data?.theme);
-    } catch (error) {
-      console.error('Error checking if new user:', error);
-      setIsNewUser(false);
-    }
-  };
-
-  // Show loading spinner only during initial session check
-  if (!sessionChecked) {
+  // Show loading spinner only during initial load
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
