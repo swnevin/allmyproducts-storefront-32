@@ -45,11 +45,16 @@ export const ProfileStep = ({
   const handleContinue = async () => {
     setIsLoading(true);
     try {
-      onContinue({
-        title: title,
-        bio: bio,
-        avatar_url: uploadedImage || undefined
-      });
+      // Only call onContinue with empty values if skip button is clicked
+      if (!title && !bio) {
+        onContinue({ title: "", bio: "", avatar_url: undefined });
+      } else {
+        onContinue({
+          title: title,
+          bio: bio,
+          avatar_url: uploadedImage || undefined
+        });
+      }
     } catch (error: any) {
       toast({
         title: "Error",

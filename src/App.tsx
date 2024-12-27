@@ -20,82 +20,51 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [isNewUser, setIsNewUser] = useState(false);
 
-  const checkNewUserStatus = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('theme')
-        .eq('id', userId)
-        .single();
-
-      if (error) {
-        console.error('Error checking user status:', error);
-        return false;
-      }
-
-      return !data?.theme;
-    } catch (error) {
-      console.error('Error in checkNewUserStatus:', error);
-      return false;
-    }
-  };
-
   useEffect(() => {
-    let ignore = false;
-
-    const initializeAuth = async () => {
-      try {
-        // Get initial session
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError) throw sessionError;
-        
-        if (!ignore) {
-          if (session?.user) {
-            setUser(session.user);
-            const isNew = await checkNewUserStatus(session.user.id);
-            setIsNewUser(isNew);
-          } else {
-            setUser(null);
-            setIsNewUser(false);
-          }
-        }
-      } catch (error) {
-        console.error('Error in initializeAuth:', error);
-        if (!ignore) {
-          setUser(null);
-          setIsNewUser(false);
-        }
-      } finally {
-        if (!ignore) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    // Initialize auth state
-    initializeAuth();
-
-    // Set up auth state change listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event, session);
-      
-      if (!ignore) {
-        if (session?.user) {
-          setUser(session.user);
-          const isNew = await checkNewUserStatus(session.user.id);
-          setIsNewUser(isNew);
-        } else {
-          setUser(null);
-          setIsNewUser(false);
-        }
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        console.log('Session found, setting user:', session.user);
+        setUser(session.user);
+        // Quick check for new user
+        supabase
+          .from('profiles')
+          .select('theme')
+          .eq('id', session.user.id)
+          .single()
+          .then(({ data }) => {
+            setIsNewUser(!data?.theme);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+      } else {
+        setUser(null);
+        setIsLoading(false);
       }
     });
 
-    // Cleanup function
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state changed:', event, session);
+      if (session?.user) {
+        setUser(session.user);
+        // Quick check for new user on auth change
+        supabase
+          .from('profiles')
+          .select('theme')
+          .eq('id', session.user.id)
+          .single()
+          .then(({ data }) => {
+            setIsNewUser(!data?.theme);
+          });
+      } else {
+        setUser(null);
+        setIsNewUser(false);
+      }
+    });
+
     return () => {
-      ignore = true;
-      subscription?.unsubscribe();
+      subscription.unsubscribe();
     };
   }, []);
 
