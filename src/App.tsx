@@ -23,7 +23,6 @@ const App = () => {
   useEffect(() => {
     let mounted = true;
 
-    // Function to check if user is new
     const checkIfNewUser = async (userId: string) => {
       if (!mounted) return;
       
@@ -46,19 +45,26 @@ const App = () => {
       }
     };
 
-    // Initial session check
-    const initializeSession = async () => {
+    const initializeAuth = async () => {
       try {
+        // Get initial session
         const { data: { session } } = await supabase.auth.getSession();
         
         if (!mounted) return;
         
-        setUser(session?.user ?? null);
         if (session?.user) {
+          setUser(session.user);
           await checkIfNewUser(session.user.id);
+        } else {
+          setUser(null);
+          setIsNewUser(false);
         }
       } catch (error) {
-        console.error('Error initializing session:', error);
+        console.error('Error initializing auth:', error);
+        if (mounted) {
+          setUser(null);
+          setIsNewUser(false);
+        }
       } finally {
         if (mounted) {
           setIsLoading(false);
@@ -66,23 +72,23 @@ const App = () => {
       }
     };
 
-    // Start initialization
-    initializeSession();
+    // Initialize auth state
+    initializeAuth();
 
-    // Listen for auth changes
+    // Subscribe to auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!mounted) return;
-      
-      setUser(session?.user ?? null);
+
       if (session?.user) {
+        setUser(session.user);
         await checkIfNewUser(session.user.id);
       } else {
+        setUser(null);
         setIsNewUser(false);
       }
       setIsLoading(false);
     });
 
-    // Cleanup function
     return () => {
       mounted = false;
       subscription.unsubscribe();
