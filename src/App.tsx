@@ -46,12 +46,14 @@ const App = () => {
     };
 
     const initializeAuth = async () => {
+      if (!mounted) return;
+      
       try {
-        // Get initial session
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) throw error;
         
         if (!mounted) return;
-        
+
         if (session?.user) {
           setUser(session.user);
           await checkIfNewUser(session.user.id);
@@ -72,12 +74,12 @@ const App = () => {
       }
     };
 
-    // Initialize auth state
     initializeAuth();
 
-    // Subscribe to auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (!mounted) return;
+
+      console.log('Auth state changed:', event, session);
 
       if (session?.user) {
         setUser(session.user);
@@ -86,12 +88,13 @@ const App = () => {
         setUser(null);
         setIsNewUser(false);
       }
+      
       setIsLoading(false);
     });
 
     return () => {
       mounted = false;
-      subscription.unsubscribe();
+      subscription?.unsubscribe();
     };
   }, []);
 
