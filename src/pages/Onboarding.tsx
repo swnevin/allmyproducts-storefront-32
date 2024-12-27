@@ -109,8 +109,8 @@ const Onboarding = () => {
         return (
           <UsernameInput 
             value={onboardingData.username}
-            onChange={setOnboardingData}
-            onContinue={handleStepComplete}
+            onChange={(value) => setOnboardingData(prev => ({ ...prev, username: value }))}
+            onContinue={() => handleStepComplete(onboardingData.username)}
           />
         );
 
@@ -118,8 +118,8 @@ const Onboarding = () => {
         return (
           <TemplateSelection 
             selectedTheme={onboardingData.theme}
-            onSelect={setOnboardingData}
-            onContinue={handleStepComplete}
+            onSelect={(theme) => setOnboardingData(prev => ({ ...prev, theme }))}
+            onContinue={() => handleStepComplete(onboardingData.theme)}
           />
         );
 

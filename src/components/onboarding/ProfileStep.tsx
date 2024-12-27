@@ -46,8 +46,8 @@ export const ProfileStep = ({
     setIsLoading(true);
     try {
       onContinue({
-        title,
-        bio,
+        title: title,
+        bio: bio,
         avatar_url: uploadedImage || undefined
       });
     } catch (error: any) {
