@@ -21,42 +21,66 @@ const App = () => {
   const [isNewUser, setIsNewUser] = useState(false);
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const handleHash = async () => {
+      // Check if we have an access_token in the URL
+      if (window.location.hash && window.location.hash.includes('access_token')) {
+        console.log('Found access token in URL, signing out existing session...');
+        // Sign out any existing session
+        await supabase.auth.signOut();
+        
+        // Let Supabase handle the hash URL parameters
+        const { data, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error('Error setting session from URL:', error);
+          setIsLoading(false);
+          return;
+        }
+        
+        if (data?.session) {
+          console.log('New session set from URL parameters');
+          setUser(data.session.user);
+          // Check if new user
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('theme')
+            .eq('id', data.session.user.id)
+            .single();
+          
+          setIsNewUser(!profileData?.theme);
+        }
+        setIsLoading(false);
+        return;
+      }
+
+      // Normal session check if no hash parameters
+      const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
-        console.log('Session found, setting user:', session.user);
+        console.log('Existing session found:', session.user);
         setUser(session.user);
-        // Quick check for new user
-        supabase
+        const { data: profileData } = await supabase
           .from('profiles')
           .select('theme')
           .eq('id', session.user.id)
-          .single()
-          .then(({ data }) => {
-            setIsNewUser(!data?.theme);
-          })
-          .finally(() => {
-            setIsLoading(false);
-          });
-      } else {
-        setUser(null);
-        setIsLoading(false);
+          .single();
+        
+        setIsNewUser(!profileData?.theme);
       }
-    });
+      setIsLoading(false);
+    };
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    handleHash();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event, session);
       if (session?.user) {
         setUser(session.user);
-        // Quick check for new user on auth change
-        supabase
+        const { data: profileData } = await supabase
           .from('profiles')
           .select('theme')
           .eq('id', session.user.id)
-          .single()
-          .then(({ data }) => {
-            setIsNewUser(!data?.theme);
-          });
+          .single();
+        
+        setIsNewUser(!profileData?.theme);
       } else {
         setUser(null);
         setIsNewUser(false);
