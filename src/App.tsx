@@ -21,73 +21,65 @@ const App = () => {
   const [isNewUser, setIsNewUser] = useState(false);
 
   useEffect(() => {
-    const handleHash = async () => {
-      // Check if we have an access_token in the URL
-      if (window.location.hash && window.location.hash.includes('access_token')) {
-        console.log('Found access token in URL, signing out existing session...');
-        // Sign out any existing session
-        await supabase.auth.signOut();
+    let ignore = false;
+
+    const initSession = async () => {
+      try {
+        console.log('Initializing session...');
+        const { data: { session }, error } = await supabase.auth.getSession();
         
-        // Let Supabase handle the hash URL parameters
-        const { data, error } = await supabase.auth.getSession();
         if (error) {
-          console.error('Error setting session from URL:', error);
-          setIsLoading(false);
+          console.error('Session error:', error);
+          if (!ignore) setIsLoading(false);
           return;
         }
-        
-        if (data?.session) {
-          console.log('New session set from URL parameters');
-          setUser(data.session.user);
-          // Check if new user
+
+        if (session?.user && !ignore) {
+          console.log('Session found:', session.user);
+          setUser(session.user);
+          
           const { data: profileData } = await supabase
             .from('profiles')
             .select('theme')
-            .eq('id', data.session.user.id)
+            .eq('id', session.user.id)
             .single();
           
           setIsNewUser(!profileData?.theme);
         }
-        setIsLoading(false);
-        return;
+      } catch (error) {
+        console.error('Session initialization error:', error);
+      } finally {
+        if (!ignore) setIsLoading(false);
       }
-
-      // Normal session check if no hash parameters
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        console.log('Existing session found:', session.user);
-        setUser(session.user);
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('theme')
-          .eq('id', session.user.id)
-          .single();
-        
-        setIsNewUser(!profileData?.theme);
-      }
-      setIsLoading(false);
     };
 
-    handleHash();
+    initSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event, session);
-      if (session?.user) {
-        setUser(session.user);
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('theme')
-          .eq('id', session.user.id)
-          .single();
-        
-        setIsNewUser(!profileData?.theme);
-      } else {
-        setUser(null);
-        setIsNewUser(false);
+      if (!ignore) {
+        if (session?.user) {
+          setUser(session.user);
+          try {
+            const { data: profileData } = await supabase
+              .from('profiles')
+              .select('theme')
+              .eq('id', session.user.id)
+              .single();
+            
+            setIsNewUser(!profileData?.theme);
+          } catch (error) {
+            console.error('Error checking user profile:', error);
+          }
+        } else {
+          setUser(null);
+          setIsNewUser(false);
+        }
       }
     });
 
     return () => {
+      ignore = true;
       subscription.unsubscribe();
     };
   }, []);

@@ -45,13 +45,12 @@ export const ProfileStep = ({
   const handleContinue = async () => {
     setIsLoading(true);
     try {
-      // Only call onContinue with empty values if skip button is clicked
       if (!title && !bio) {
         onContinue({ title: "", bio: "", avatar_url: undefined });
       } else {
         onContinue({
-          title: title,
-          bio: bio,
+          title: title || "",  // Ensure title is never undefined
+          bio: bio || "",      // Ensure bio is never undefined
           avatar_url: uploadedImage || undefined
         });
       }
