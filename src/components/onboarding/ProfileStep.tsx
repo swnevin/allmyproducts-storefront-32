@@ -146,7 +146,7 @@ export const ProfileStep = ({
         </Button>
         <Button
           variant="outline"
-          onClick={() => onContinue({})}
+          onClick={() => onContinue({ title: "", bio: "", avatar_url: undefined })}
           className="w-full"
           disabled={isLoading}
         >
