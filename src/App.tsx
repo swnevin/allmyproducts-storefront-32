@@ -23,28 +23,64 @@ const App = () => {
   useEffect(() => {
     let ignore = false;
 
+    // Handle hash fragment for magic links
+    const handleHashFragment = async () => {
+      const hash = window.location.hash;
+      if (hash && hash.includes('access_token')) {
+        try {
+          const { data: { session }, error } = await supabase.auth.getSession();
+          if (error) throw error;
+          if (session) {
+            window.location.hash = '';
+            return session;
+          }
+        } catch (error) {
+          console.error('Error handling hash fragment:', error);
+        }
+      }
+      return null;
+    };
+
     const initSession = async () => {
       try {
         console.log('Initializing session...');
+        
+        // First check for magic link authentication
+        const magicSession = await handleHashFragment();
+        if (magicSession && !ignore) {
+          console.log('Magic link session found:', magicSession.user);
+          setUser(magicSession.user);
+          setIsLoading(false);
+          return;
+        }
+
+        // Then check for existing session
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
           console.error('Session error:', error);
-          if (!ignore) setIsLoading(false);
+          if (!ignore) {
+            setIsLoading(false);
+            setUser(null);
+          }
           return;
         }
 
         if (session?.user && !ignore) {
-          console.log('Session found:', session.user);
+          console.log('Existing session found:', session.user);
           setUser(session.user);
           
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('theme')
-            .eq('id', session.user.id)
-            .single();
-          
-          setIsNewUser(!profileData?.theme);
+          try {
+            const { data: profileData } = await supabase
+              .from('profiles')
+              .select('theme')
+              .eq('id', session.user.id)
+              .single();
+            
+            if (!ignore) setIsNewUser(!profileData?.theme);
+          } catch (error) {
+            console.error('Error checking user profile:', error);
+          }
         }
       } catch (error) {
         console.error('Session initialization error:', error);
@@ -75,15 +111,27 @@ const App = () => {
           setUser(null);
           setIsNewUser(false);
         }
+        setIsLoading(false);
       }
     });
+
+    // Set a timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      if (!ignore && isLoading) {
+        console.log('Session initialization timed out');
+        setIsLoading(false);
+        setUser(null);
+      }
+    }, 5000); // 5 second timeout
 
     return () => {
       ignore = true;
       subscription.unsubscribe();
+      clearTimeout(timeoutId);
     };
   }, []);
 
+  // Show loading spinner for maximum 5 seconds
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
