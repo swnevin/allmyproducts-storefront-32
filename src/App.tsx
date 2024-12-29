@@ -48,6 +48,7 @@ const OnboardingWrapper = ({ children }: { children: React.ReactNode }) => {
           .eq('id', session.user.id)
           .single();
 
+        // Only redirect to onboarding if this is a new user (no theme or username)
         if (!profile?.theme || !profile?.username) {
           navigate('/onboarding');
         }
@@ -55,6 +56,20 @@ const OnboardingWrapper = ({ children }: { children: React.ReactNode }) => {
     };
 
     checkProfile();
+  }, [session, navigate]);
+
+  return <>{children}</>;
+};
+
+// Route guard for public routes (landing, login)
+const PublicRoute = ({ children }: { children: React.ReactNode }) => {
+  const { session } = useSessionContext();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (session) {
+      navigate('/dashboard');
+    }
   }, [session, navigate]);
 
   return <>{children}</>;
@@ -69,20 +84,14 @@ const App = () => {
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="/login" element={<Login />} />
+              <Route path="/" element={<PublicRoute><Landing /></PublicRoute>} />
+              <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
               <Route path="/onboarding" element={
                 <AuthWrapper>
                   <Onboarding />
                 </AuthWrapper>
               } />
-              <Route path="/storefront" element={
-                <AuthWrapper>
-                  <OnboardingWrapper>
-                    <Index />
-                  </OnboardingWrapper>
-                </AuthWrapper>
-              } />
+              <Route path="/storefront" element={<Index />} />
               <Route path="/dashboard/*" element={
                 <AuthWrapper>
                   <OnboardingWrapper>

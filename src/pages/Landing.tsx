@@ -19,7 +19,7 @@ const Landing = () => {
               Login
             </Button>
             <Button
-              onClick={() => navigate("/onboarding")}
+              onClick={() => navigate("/login")}
               className="bg-primary hover:bg-primary/90"
             >
               Get Started
@@ -41,7 +41,7 @@ const Landing = () => {
             <div className="flex gap-4 justify-center">
               <Button
                 size="lg"
-                onClick={() => navigate("/onboarding")}
+                onClick={() => navigate("/login")}
                 className="bg-primary hover:bg-primary/90"
               >
                 Create Your Page <ArrowRight className="ml-2" />
@@ -49,7 +49,7 @@ const Landing = () => {
               <Button
                 size="lg"
                 variant="outline"
-                onClick={() => navigate("/login")}
+                onClick={() => navigate("/storefront")}
               >
                 View Demo
               </Button>
