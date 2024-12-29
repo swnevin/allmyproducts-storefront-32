@@ -2,23 +2,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useRef } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 
 export const ProfileStep = ({ 
   onContinue,
   skipText
 }: { 
-  onContinue: (data: { title: string; bio: string; avatar_url?: string }) => void;
+  onContinue: () => void;
   skipText: string;
 }) => {
   const [title, setTitle] = useState("");
   const [bio, setBio] = useState("");
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { toast } = useToast();
 
   const dummyAvatars = [
     { id: 1, color: "bg-gradient-to-br from-blue-400 to-blue-600" },
@@ -40,29 +36,6 @@ export const ProfileStep = ({
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
-  };
-
-  const handleContinue = async () => {
-    setIsLoading(true);
-    try {
-      if (!title && !bio) {
-        onContinue({ title: "", bio: "", avatar_url: undefined });
-      } else {
-        onContinue({
-          title: title || "",  // Ensure title is never undefined
-          bio: bio || "",      // Ensure bio is never undefined
-          avatar_url: uploadedImage || undefined
-        });
-      }
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   return (
@@ -138,17 +111,15 @@ export const ProfileStep = ({
 
       <div className="space-y-4">
         <Button 
-          onClick={handleContinue}
+          onClick={onContinue}
           className="w-full bg-primary hover:bg-primary/90"
-          disabled={isLoading}
         >
-          {isLoading ? "Saving..." : "Continue"}
+          Continue
         </Button>
         <Button
           variant="outline"
-          onClick={() => onContinue({ title: "", bio: "", avatar_url: undefined })}
+          onClick={onContinue}
           className="w-full"
-          disabled={isLoading}
         >
           {skipText}
         </Button>
