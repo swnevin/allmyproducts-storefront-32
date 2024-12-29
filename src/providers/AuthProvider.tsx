@@ -23,19 +23,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
     let timeoutId: NodeJS.Timeout;
 
     const checkUserProfile = async (userId: string) => {
       try {
-        const { data: profileData } = await supabase
+        const { data: profileData, error } = await supabase
           .from('profiles')
-          .select('theme')
+          .select('theme, username')
           .eq('id', userId)
           .single();
         
-        setIsNewUser(!profileData?.theme);
+        if (error) throw error;
+        
+        // User is considered new if they don't have a theme OR username set
+        return !profileData?.theme || !profileData?.username;
       } catch (error) {
         console.error('Error checking user profile:', error);
+        return false;
       }
     };
 
@@ -44,17 +49,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // Check for active session
         const { data: { session }, error } = await supabase.auth.getSession();
         
-        if (error) throw error;
+        if (error) {
+          console.error('Session error:', error);
+          if (mounted) {
+            setUser(null);
+            setIsLoading(false);
+          }
+          return;
+        }
         
         if (session?.user) {
           console.log('Session found:', session.user);
-          setUser(session.user);
-          await checkUserProfile(session.user.id);
+          const isNew = await checkUserProfile(session.user.id);
+          if (mounted) {
+            setUser(session.user);
+            setIsNewUser(isNew);
+          }
         }
       } catch (error) {
         console.error('Auth initialization error:', error);
       } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -63,13 +80,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.log('Auth state changed:', event, session);
       
       if (session?.user) {
-        setUser(session.user);
-        await checkUserProfile(session.user.id);
+        const isNew = await checkUserProfile(session.user.id);
+        if (mounted) {
+          setUser(session.user);
+          setIsNewUser(isNew);
+        }
       } else {
-        setUser(null);
-        setIsNewUser(false);
+        if (mounted) {
+          setUser(null);
+          setIsNewUser(false);
+        }
       }
-      setIsLoading(false);
+      if (mounted) {
+        setIsLoading(false);
+      }
     });
 
     // Initialize auth
@@ -77,12 +101,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Set a timeout to prevent infinite loading
     timeoutId = setTimeout(() => {
-      setIsLoading(false);
+      if (mounted && isLoading) {
+        console.log('Auth timeout reached, forcing load completion');
+        setIsLoading(false);
+      }
     }, 5000);
 
     return () => {
-      subscription.unsubscribe();
+      mounted = false;
       clearTimeout(timeoutId);
+      subscription.unsubscribe();
     };
   }, []);
 

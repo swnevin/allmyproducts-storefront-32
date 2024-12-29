@@ -19,6 +19,9 @@ const queryClient = new QueryClient();
 const AppRoutes = () => {
   const { user, isNewUser } = useAuth();
 
+  // Check if we're on a magic link callback
+  const isMagicLink = window.location.hash.includes('access_token');
+
   return (
     <Routes>
       <Route 
@@ -38,13 +41,21 @@ const AppRoutes = () => {
       <Route 
         path="/login" 
         element={
-          user ? <Navigate to="/dashboard" replace /> : <Login />
+          user || isMagicLink ? <Navigate to="/dashboard" replace /> : <Login />
         } 
       />
       <Route 
         path="/onboarding" 
         element={
-          user ? <Onboarding /> : <Navigate to="/" replace />
+          user ? (
+            isNewUser ? (
+              <Onboarding />
+            ) : (
+              <Navigate to="/dashboard" replace />
+            )
+          ) : (
+            <Navigate to="/" replace />
+          )
         } 
       />
       <Route 
