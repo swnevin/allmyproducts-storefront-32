@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SessionContextProvider, useSessionContext } from '@supabase/auth-helpers-react';
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Index from "./pages/Index";
 import Landing from "./pages/Landing";
@@ -38,25 +38,38 @@ const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
 const OnboardingWrapper = ({ children }: { children: React.ReactNode }) => {
   const { session } = useSessionContext();
   const navigate = useNavigate();
+  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
     const checkProfile = async () => {
       if (session?.user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('theme, username')
-          .eq('id', session.user.id)
-          .single();
+        try {
+          const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('theme, username')
+            .eq('id', session.user.id)
+            .single();
 
-        // Only redirect to onboarding if this is a new user (no theme or username)
-        if (!profile?.theme || !profile?.username) {
-          navigate('/onboarding');
+          // Only redirect to onboarding for new users who haven't completed their profile
+          if (error || (!profile?.theme && !profile?.username)) {
+            navigate('/onboarding');
+          }
+        } catch (error) {
+          console.error('Error checking profile:', error);
+        } finally {
+          setIsChecking(false);
         }
+      } else {
+        setIsChecking(false);
       }
     };
 
     checkProfile();
   }, [session, navigate]);
+
+  if (isChecking) {
+    return <div>Loading...</div>;
+  }
 
   return <>{children}</>;
 };
