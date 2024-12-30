@@ -14,11 +14,23 @@ export const ProductGallery = () => {
 
   useEffect(() => {
     const loadProducts = async () => {
-      const { data: products } = await supabase
-        .from('products')
-        .select('*')
-        .eq('user_id', userId || '')
-        .order('created_at', { ascending: false });
+      let query = supabase.from('products').select('*');
+      
+      // If userId is provided, filter by that user's products
+      // Otherwise, show demo products (you might want to add a flag in the database for demo products)
+      if (userId) {
+        query = query.eq('user_id', userId);
+      } else {
+        // For demo, just show the first few products or you could add a is_demo column
+        query = query.limit(6);
+      }
+
+      const { data: products, error } = await query.order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading products:', error);
+        return;
+      }
 
       if (products) {
         setAllProducts(products);
@@ -89,7 +101,7 @@ export const ProductGallery = () => {
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
       />
-      <JoinCreator />
+      {!userId && <JoinCreator />}
     </div>
   );
 };

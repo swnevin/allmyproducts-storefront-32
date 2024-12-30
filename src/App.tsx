@@ -13,6 +13,7 @@ import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Billing from "./pages/Billing";
 import { supabase } from "./integrations/supabase/client";
+import { ProductGallery } from "./components/ProductGallery";
 
 const queryClient = new QueryClient();
 
@@ -104,7 +105,8 @@ const App = () => {
                   <Onboarding />
                 </AuthWrapper>
               } />
-              <Route path="/storefront" element={<Index />} />
+              <Route path="/demo" element={<ProductGallery />} />
+              <Route path="/storefront/:userId" element={<ProductGallery />} />
               <Route path="/dashboard/*" element={
                 <AuthWrapper>
                   <OnboardingWrapper>

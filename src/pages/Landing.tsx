@@ -49,7 +49,7 @@ const Landing = () => {
               <Button
                 size="lg"
                 variant="outline"
-                onClick={() => navigate("/storefront")}
+                onClick={() => navigate("/demo")}
               >
                 View Demo
               </Button>
