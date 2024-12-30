@@ -5,41 +5,45 @@ import { SearchBar } from "./SearchBar";
 import { supabase } from "@/integrations/supabase/client";
 import { useParams } from "react-router-dom";
 import { Product } from "@/types/product";
+import { ProfileHeader } from "./ProfileHeader";
 
 // Demo products for the example page
 const demoProducts: Product[] = [
   {
     id: "demo1",
-    title: "Minimalist Desk Setup",
-    description: "Clean and productive workspace design",
-    image: "https://images.unsplash.com/photo-1593062096033-9a26b09da705?w=800&auto=format&fit=crop",
+    title: "Summer Fashion Essentials",
+    description: "My favorite summer dress paired with trendy accessories",
+    image: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=800&auto=format&fit=crop",
     points: [
-      { x: 25, y: 45, title: "Ergonomic Chair", link: "https://example.com/chair" },
-      { x: 65, y: 35, title: "LED Desk Lamp", link: "https://example.com/lamp" }
+      { x: 35, y: 45, title: "Floral Maxi Dress", link: "https://example.com/dress" },
+      { x: 65, y: 25, title: "Gold Necklace", link: "https://example.com/necklace" },
+      { x: 50, y: 75, title: "Strappy Sandals", link: "https://example.com/sandals" }
     ],
     user_id: "demo",
     created_at: new Date().toISOString()
   },
   {
     id: "demo2",
-    title: "Modern Living Room",
-    description: "Contemporary living space with natural light",
-    image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&auto=format&fit=crop",
+    title: "Office Style Guide",
+    description: "Professional yet comfortable workwear outfit",
+    image: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=800&auto=format&fit=crop",
     points: [
-      { x: 30, y: 50, title: "Modern Sofa", link: "https://example.com/sofa" },
-      { x: 70, y: 40, title: "Coffee Table", link: "https://example.com/table" }
+      { x: 30, y: 40, title: "Blazer", link: "https://example.com/blazer" },
+      { x: 45, y: 60, title: "Pencil Skirt", link: "https://example.com/skirt" },
+      { x: 70, y: 35, title: "Statement Earrings", link: "https://example.com/earrings" }
     ],
     user_id: "demo",
     created_at: new Date().toISOString()
   },
   {
     id: "demo3",
-    title: "Kitchen Essentials",
-    description: "Must-have kitchen tools and appliances",
-    image: "https://images.unsplash.com/photo-1556911220-bff31c812dba?w=800&auto=format&fit=crop",
+    title: "Weekend Casual Look",
+    description: "Comfortable and stylish weekend outfit ideas",
+    image: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=800&auto=format&fit=crop",
     points: [
-      { x: 40, y: 60, title: "Stand Mixer", link: "https://example.com/mixer" },
-      { x: 75, y: 45, title: "Coffee Machine", link: "https://example.com/coffee" }
+      { x: 40, y: 35, title: "Denim Jacket", link: "https://example.com/jacket" },
+      { x: 55, y: 65, title: "White Sneakers", link: "https://example.com/sneakers" },
+      { x: 75, y: 45, title: "Crossbody Bag", link: "https://example.com/bag" }
     ],
     user_id: "demo",
     created_at: new Date().toISOString()
@@ -74,8 +78,8 @@ export const ProductGallery = () => {
       }
 
       if (products) {
-        setAllProducts(products as Product[]);
-        setFilteredProducts(products as Product[]);
+        setAllProducts(products);
+        setFilteredProducts(products);
       }
     };
 
@@ -106,6 +110,7 @@ export const ProductGallery = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
       <div className="container mx-auto px-4 py-8">
+        {!userId && <ProfileHeader />}
         <SearchBar onSearch={handleSearch} />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
           {filteredProducts.map((product) => (
