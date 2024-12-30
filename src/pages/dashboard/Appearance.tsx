@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useSessionContext } from "@supabase/auth-helpers-react";
 
 const themes = [
   {
@@ -59,11 +61,33 @@ const themes = [
 ];
 
 export const Appearance = () => {
-  const [displayName, setDisplayName] = useState("Sarah's Fashion Picks");
-  const [bio, setBio] = useState("Fashion enthusiast sharing my favorite outfits and accessories. All products linked below!");
+  const [displayName, setDisplayName] = useState("");
+  const [bio, setBio] = useState("");
   const [selectedTheme, setSelectedTheme] = useState("default");
-  const [avatarUrl, setAvatarUrl] = useState("https://images.unsplash.com/photo-1649972904349-6e44c42644a7");
+  const [avatarUrl, setAvatarUrl] = useState("");
   const { toast } = useToast();
+  const { session } = useSessionContext();
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      if (session?.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('title, bio, theme, avatar_url')
+          .eq('id', session.user.id)
+          .single();
+
+        if (profile) {
+          setDisplayName(profile.title || "");
+          setBio(profile.bio || "");
+          setSelectedTheme(profile.theme || "default");
+          setAvatarUrl(profile.avatar_url || "");
+        }
+      }
+    };
+
+    loadProfile();
+  }, [session]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -76,11 +100,33 @@ export const Appearance = () => {
     }
   };
 
-  const handleSaveAppearance = () => {
-    toast({
-      title: "Changes saved",
-      description: "Your appearance settings have been updated.",
-    });
+  const handleSaveAppearance = async () => {
+    if (!session?.user) return;
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          title: displayName,
+          bio: bio,
+          theme: selectedTheme,
+          avatar_url: avatarUrl,
+        })
+        .eq('id', session.user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Changes saved",
+        description: "Your appearance settings have been updated.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save changes. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (

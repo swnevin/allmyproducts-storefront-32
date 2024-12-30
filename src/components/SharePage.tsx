@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Copy } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { useSessionContext } from "@supabase/auth-helpers-react";
 
 interface SharePageProps {
   open: boolean;
@@ -11,7 +12,8 @@ interface SharePageProps {
 
 export const SharePage = ({ open, onOpenChange }: SharePageProps) => {
   const { toast } = useToast();
-  const url = window.location.origin + "/storefront";
+  const { session } = useSessionContext();
+  const url = session?.user ? `${window.location.origin}/storefront/${session.user.id}` : window.location.origin;
 
   const handleCopy = async () => {
     try {

@@ -1,8 +1,8 @@
 export interface Product {
   id: string;
   title: string;
-  description: string;
-  image: string;
+  description: string | null;
+  image: string | null;
   user_id: string;
   created_at: string;
   points: Array<{
@@ -10,5 +10,5 @@ export interface Product {
     y: number;
     title: string;
     link: string;
-  }>;
+  }> | null;
 }
