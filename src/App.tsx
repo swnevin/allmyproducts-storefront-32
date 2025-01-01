@@ -11,6 +11,7 @@ import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import ResetPassword from "./pages/ResetPassword";
+import SetNewPassword from "./pages/SetNewPassword";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Billing from "./pages/Billing";
@@ -103,6 +104,7 @@ const App = () => {
               <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
               <Route path="/signup" element={<PublicRoute><SignUp /></PublicRoute>} />
               <Route path="/reset-password" element={<PublicRoute><ResetPassword /></PublicRoute>} />
+              <Route path="/set-new-password" element={<PublicRoute><SetNewPassword /></PublicRoute>} />
               <Route path="/onboarding" element={
                 <AuthWrapper>
                   <Onboarding />

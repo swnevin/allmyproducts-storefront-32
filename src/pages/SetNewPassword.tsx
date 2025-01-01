@@ -7,33 +7,33 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
-const ResetPassword = () => {
+const SetNewPassword = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleResetPassword = async (e: React.FormEvent) => {
+  const handleSetNewPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/set-new-password`,
+      const { error } = await supabase.auth.updateUser({
+        password: password,
       });
 
       if (error) {
         toast({
           variant: "destructive",
-          title: "Error sending reset link",
-          description: "Please check your email and try again.",
+          title: "Error updating password",
+          description: "Please try again or contact support if the problem persists.",
         });
       } else {
         toast({
-          title: "Check your email",
-          description: "We've sent you a password reset link.",
+          title: "Password updated",
+          description: "Your password has been successfully updated. You can now log in with your new password.",
         });
-        // Don't navigate away - let user see the success message
+        navigate("/login");
       }
     } catch (error) {
       toast({
@@ -56,19 +56,20 @@ const ResetPassword = () => {
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
-            <h1 className="text-2xl font-bold">Reset your password</h1>
-            <p className="text-gray-600">Enter your email to receive a reset link</p>
+            <h1 className="text-2xl font-bold">Set new password</h1>
+            <p className="text-gray-600">Enter your new password below</p>
           </div>
-          <form className="space-y-4" onSubmit={handleResetPassword}>
+          <form className="space-y-4" onSubmit={handleSetNewPassword}>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="password">New Password</Label>
               <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your new password"
                 required
+                minLength={6}
               />
             </div>
             <Button
@@ -76,15 +77,7 @@ const ResetPassword = () => {
               className="w-full"
               disabled={isLoading}
             >
-              {isLoading ? "Sending..." : "Send Reset Link"}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full"
-              onClick={() => navigate("/login")}
-            >
-              Back to Login
+              {isLoading ? "Updating..." : "Set New Password"}
             </Button>
           </form>
         </div>
@@ -93,4 +86,4 @@ const ResetPassword = () => {
   );
 };
 
-export default ResetPassword;
+export default SetNewPassword;
